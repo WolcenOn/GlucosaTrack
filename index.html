@@ -296,521 +296,6 @@
     </div>
     <div class="warning-card">
       <span style="font-size:18px;flex-shrink:0;margin-top:1px">⚠️</span>
-      <div class="warning-text"><strong>Aviso importante:</strong> Esta aplicación es una herramienta de apoyo educativo. Los cálculos son estimaciones basadas en modelos simplificados y no sustituyen el criterio médico. Consulta siempre a tu end    color: var(--muted); font-size: 10px; font-weight: 600;
-    font-family: inherit; transition: color .2s; min-width: 52px;
-  }
-  .nav-btn svg { width: 23px; height: 23px; stroke-width: 1.8; transition: stroke-width .2s; }
-  .nav-btn.active { color: var(--primary); }
-  .nav-btn.active svg { stroke-width: 2.6; }
-  .tab-section { display: none; }
-  .tab-section.active { display: block; }
-  .sec-title { font-size: 19px; font-weight: 900; margin-bottom: 14px; letter-spacing: -0.3px; }
-  .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .input {
-    width: 100%; padding: 12px 16px; border-radius: 12px;
-    border: 2px solid #D5E8E3; font-size: 15px; font-family: inherit;
-    outline: none; background: white; color: var(--text); transition: border-color .2s;
-  }
-  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,127,110,0.12); }
-  .btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 11px 18px; border-radius: 12px; border: none;
-    cursor: pointer; font-weight: 700; font-size: 14px;
-    font-family: inherit; transition: opacity .15s, transform .1s;
-  }
-  .btn:hover { opacity: 0.88; } .btn:active { transform: scale(.97); }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-green   { background: var(--safe); color: white; }
-  .btn-red     { background: var(--danger); color: white; }
-  .btn-grey    { background: #64748B; color: white; }
-  .btn-icon {
-    padding: 9px; border-radius: 10px; border: none; cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    transition: opacity .15s; font-family: inherit; font-size: 16px;
-  }
-  .btn-icon:hover { opacity: 0.8; }
-  #search-row { display: flex; gap: 8px; margin-bottom: 16px; }
-  #search-input { flex: 1; }
-  .food-card { background: var(--card); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .food-card-inner { display: flex; gap: 12px; align-items: flex-start; }
-  .food-thumb-wrap { position: relative; flex-shrink: 0; cursor: zoom-in; }
-  .food-thumb { width: 74px; height: 74px; border-radius: 12px; object-fit: cover; border: 1px solid #EAF2EF; display: block; }
-  .food-no-img { width: 74px; height: 74px; border-radius: 12px; background: var(--primary-lt); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 28px; }
-  .zoom-hint { position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.45); border-radius: 5px; padding: 2px 5px; font-size: 10px; line-height: 1; }
-  .food-info { flex: 1; min-width: 0; }
-  .food-name { font-weight: 700; font-size: 14.5px; line-height: 1.3; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .food-brand { font-size: 11.5px; color: var(--muted); }
-  .food-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .fav-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; font-size: 20px; line-height: 1; }
-  .macros-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
-  .macro-badge { border-radius: 8px; padding: 3px 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
-  .food-add-btn { width: 100%; justify-content: center; margin-top: 12px; }
-  .macro-grid-wrap { background: linear-gradient(135deg, rgba(26,127,110,0.08), rgba(208,240,234,0.5)); border: 1px solid rgba(26,127,110,0.15); border-radius: 18px; padding: 16px; margin-bottom: 12px; }
-  .macro-grid-title { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: var(--primary-dk); }
-  .macro-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
-  .macro-cell { background: white; border-radius: 12px; padding: 10px 6px; text-align: center; }
-  .macro-cell .val { font-size: 19px; font-weight: 800; }
-  .macro-cell .unit { font-size: 10px; opacity: 0.7; }
-  .macro-cell .lbl  { font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .meal-item { background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .meal-item-top { display: flex; gap: 10px; align-items: center; }
-  .meal-thumb { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
-  .meal-no-thumb { width: 50px; height: 50px; border-radius: 10px; background: var(--primary-lt); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-  .meal-item-name { font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .meal-item-sub  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .weight-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-  .weight-display { font-size: 20px; font-weight: 900; color: var(--primary); min-width: 70px; text-align: center; }
-  .weight-display span { font-size: 12px; font-weight: 600; opacity: 0.7; }
-  input[type=range] { width: 100%; accent-color: var(--primary); cursor: pointer; margin-top: 8px; }
-  .range-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .status-banner { border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .status-title { font-weight: 800; font-size: 15px; }
-  .status-sub   { font-size: 13px; color: var(--muted); margin-top: 3px; }
-  .status-right { text-align: right; font-size: 12px; color: var(--muted); }
-  .chart-wrap { position: relative; height: 240px; }
-  .absorb-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #F0F5F3; }
-  .absorb-row:last-child { border-bottom: none; }
-  .absorb-label { font-size: 13px; font-weight: 600; }
-  .absorb-right { display: flex; gap: 10px; align-items: center; }
-  .absorb-g   { font-size: 12px; color: var(--muted); font-weight: 600; }
-  .absorb-min { font-size: 12px; font-weight: 800; border-radius: 8px; padding: 3px 10px; }
-  .setting-card { background: var(--card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .setting-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .setting-label { font-weight: 800; font-size: 14px; }
-  .setting-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .setting-val   { border-radius: 10px; padding: 5px 12px; font-weight: 900; font-size: 17px; flex-shrink: 0; margin-left: 10px; }
-  .setting-val span { font-size: 11px; font-weight: 600; opacity: 0.8; }
-  .target-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .target-col label { font-size: 12px; color: var(--muted); font-weight: 600; display: block; margin-bottom: 5px; }
-  .target-col input.input { font-size: 22px; font-weight: 900; text-align: center; color: var(--primary); padding: 10px; }
-  .warning-card { background: #FFFBEB; border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; padding: 14px; margin-bottom: 10px; display: flex; gap: 10px; }
-  .warning-text { font-size: 12px; color: #92400E; line-height: 1.55; }
-  .fav-section-title { font-weight: 800; font-size: 15px; margin: 16px 0 10px; color: var(--primary-dk); }
-  .fav-section-title:first-child { margin-top: 0; }
-  .saved-meal-card { background: var(--card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .saved-meal-name { font-weight: 800; font-size: 15px; }
-  .saved-meal-sub  { font-size: 12px; color: var(--muted); margin-top: 3px; }
-  .saved-meal-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty-state .emoji { font-size: 52px; margin-bottom: 14px; }
-  .empty-state .title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-  .empty-state .sub   { font-size: 14px; line-height: 1.6; }
-  .loading-state { text-align: center; padding: 50px 20px; color: var(--muted); }
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--primary-lt); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #lightbox { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
-  #lightbox.open { display: flex; }
-  #lightbox img { max-width: 100%; max-height: 85vh; border-radius: 18px; object-fit: contain; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-  #lightbox-close { position: absolute; top: 20px; right: 20px; background: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-  #scanner-modal { display: none; position: fixed; inset: 0; z-index: 1500; background: rgba(0,0,0,0.94); flex-direction: column; align-items: center; justify-content: center; padding: 24px; gap: 0; }
-  #scanner-modal.open { display: flex; }
-  #scanner-modal h2 { color: white; font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-  #scanner-modal > p { color: var(--primary-lt); font-size: 13px; margin-bottom: 20px; }
-  #scanner-video-wrap { position: relative; }
-  #scanner-video { width: 300px; height: 200px; border-radius: 16px; border: 3px solid var(--primary); object-fit: cover; display: block; }
-  #scanner-reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 200px; height: 60px; border: 2px solid var(--primary-lt); border-radius: 8px; opacity: 0.7; pointer-events: none; }
-  #scanner-status { color: var(--primary-lt); font-size: 12px; margin-top: 12px; min-height: 20px; }
-  #scanner-manual-row { display: flex; gap: 10px; margin-top: 20px; }
-  #scanner-manual-row input { width: 200px; }
-  #scanner-hint { color: var(--warn); font-size: 12px; margin-top: 8px; text-align: center; display: none; }
-  #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); z-index: 3000; background: var(--safe); color: white; padding: 10px 22px; border-radius: 24px; font-weight: 700; font-size: 13px; box-shadow: 0 6px 24px rgba(0,0,0,0.2); white-space: nowrap; pointer-events: none; transition: transform .3s cubic-bezier(.22,1,.36,1); }
-  #toast.show { transform: translateX(-50%) translateY(0); }
-  #toast.error { background: var(--danger); }
-  .flex-1  { flex: 1; min-width: 0; }
-  .chart-legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 10px; font-size: 11px; color: var(--muted); }
-  .legend-item { display: flex; align-items: center; gap: 5px; }
-  .legend-line { width: 22px; height: 2px; border-radius: 1px; }
-  .save-meal-row { display: flex; gap: 10px; }
-  .save-meal-row input { flex: 1; }
-  @media (max-width: 400px) {
-    .macro-cell .val { font-size: 16px; }
-    .food-thumb, .food-no-img { width: 62px; height: 62px; }
-  }
-</style>
-</head>
-<body>
-
-<header id="app-header">
-  <div>
-    <h1>💉 GlucosaTrack</h1>
-    <p>Gestión inteligente de insulina</p>
-  </div>
-  <button id="meal-chip" onclick="showTab('meal')">🍽️ <span id="meal-chip-count">0</span> alimentos</button>
-</header>
-
-<main id="main">
-  <!-- SEARCH -->
-  <section id="tab-search" class="tab-section active">
-    <div id="search-row">
-      <input id="search-input" class="input" type="search" placeholder="Buscar alimentos…" autocomplete="off" />
-      <button class="btn btn-primary" onclick="doSearch()" title="Buscar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:20px;height:20px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </button>
-      <button class="btn btn-primary" style="background:var(--primary-dk)" onclick="openScanner()" title="Escanear">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:20px;height:20px"><path d="M3 9V5a2 2 0 0 1 2-2h4M15 3h4a2 2 0 0 1 2 2v4M3 15v4a2 2 0 0 0 2 2h4M15 21h4a2 2 0 0 0 2-2v-4M8 10h8M8 14h4"/></svg>
-      </button>
-    </div>
-    <div id="search-results">
-      <div class="empty-state">
-        <div class="emoji">🥗</div>
-        <div class="title">Busca un alimento</div>
-        <div class="sub">Escribe en el buscador o escanea<br>un código de barras con la cámara</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MEAL -->
-  <section id="tab-meal" class="tab-section">
-    <div class="sec-title">🍽️ Mi Plato</div>
-    <div id="meal-summary"></div>
-    <div id="meal-list"></div>
-    <div id="meal-save-wrap" style="display:none">
-      <div class="card">
-        <div style="font-weight:800;font-size:14px;margin-bottom:10px;color:var(--primary-dk)">💾 Guardar este plato</div>
-        <div class="save-meal-row">
-          <input id="meal-name-input" class="input" placeholder="Nombre del plato…" />
-          <button class="btn btn-primary" onclick="saveMeal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:17px;height:17px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          </button>
-        </div>
-      </div>
-      <button class="btn btn-red" style="width:100%;justify-content:center" onclick="clearMeal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-        Vaciar plato
-      </button>
-    </div>
-    <div id="meal-empty" class="empty-state">
-      <div class="emoji">🥄</div>
-      <div class="title">El plato está vacío</div>
-      <div class="sub">Busca alimentos y añádelos aquí</div>
-      <button class="btn btn-primary" style="margin:16px auto 0;display:flex" onclick="showTab('search')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Buscar alimentos
-      </button>
-    </div>
-  </section>
-
-  <!-- GRAPH -->
-  <section id="tab-graph" class="tab-section">
-    <div class="sec-title">📈 Glucosa Estimada</div>
-    <div id="graph-empty" class="empty-state">
-      <div class="emoji">📊</div>
-      <div class="title">Añade alimentos al plato</div>
-      <div class="sub">La gráfica mostrará la evolución estimada de glucosa en sangre según los tiempos de absorción configurados</div>
-    </div>
-    <div id="graph-content" style="display:none">
-      <div id="status-banner" class="status-banner"></div>
-      <div class="card" style="padding:16px 8px 12px">
-        <div class="chart-wrap"><canvas id="glucose-chart"></canvas></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-line" style="background:var(--safe)"></div>Mín normal</div>
-          <div class="legend-item"><div class="legend-line" style="background:var(--warn)"></div>Máx objetivo</div>
-          <div class="legend-item"><div class="legend-line" style="background:var(--danger)"></div>Alto (180)</div>
-        </div>
-      </div>
-      <div id="graph-macro-summary"></div>
-      <div class="card">
-        <div style="font-weight:800;font-size:14px;margin-bottom:10px;color:var(--primary-dk)">⏱️ Tiempos de absorción</div>
-        <div id="absorb-list"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAVORITES -->
-  <section id="tab-favorites" class="tab-section">
-    <div class="sec-title">⭐ Favoritos</div>
-    <div id="fav-meals-wrap"></div>
-    <div id="fav-foods-wrap"></div>
-    <div id="fav-empty" class="empty-state">
-      <div class="emoji">⭐</div>
-      <div class="title">Sin favoritos todavía</div>
-      <div class="sub">Pulsa el corazón ❤️ en un alimento para guardarlo, o guarda un plato desde la pestaña Plato</div>
-    </div>
-  </section>
-
-  <!-- SETTINGS -->
-  <section id="tab-settings" class="tab-section">
-    <div class="sec-title">⚙️ Configuración</div>
-    <div id="settings-fields"></div>
-    <div class="card">
-      <div style="font-weight:800;font-size:14px;margin-bottom:12px;color:var(--primary-dk)">🎯 Rango objetivo de glucosa</div>
-      <div class="target-row">
-        <div class="target-col">
-          <label>Mínimo</label>
-          <input id="targetMin" class="input" type="number" min="50" max="300" />
-          <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px">mg/dL</div>
-        </div>
-        <div class="target-col">
-          <label>Máximo</label>
-          <input id="targetMax" class="input" type="number" min="50" max="300" />
-          <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px">mg/dL</div>
-        </div>
-      </div>
-    </div>
-    <div class="warning-card">
-      <span style="font-size:18px;flex-shrink:0;margin-top:1px">⚠️</span>
-      <div class="warning-text"><strong>Aviso importante:</strong> Esta aplicación es una herramienta de apoyo educativo. Los cálculos son estimaciones basadas en modelos simplificados y no sustituyen el criterio médico. Consulta siempre a tu end    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    background: white; border-top: 1px solid #E2EDEA;
-    display: flex; justify-content: space-around;
-    padding: 8px 0 max(10px, env(safe-area-inset-bottom));
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.07);
-  }
-  .nav-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 4px 12px; background: none; border: none; cursor: pointer;
-    color: var(--muted); font-size: 10px; font-weight: 600;
-    font-family: inherit; transition: color .2s; min-width: 52px;
-  }
-  .nav-btn svg { width: 23px; height: 23px; stroke-width: 1.8; transition: stroke-width .2s; }
-  .nav-btn.active { color: var(--primary); }
-  .nav-btn.active svg { stroke-width: 2.6; }
-  .tab-section { display: none; }
-  .tab-section.active { display: block; }
-  .sec-title { font-size: 19px; font-weight: 900; margin-bottom: 14px; letter-spacing: -0.3px; }
-  .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .input {
-    width: 100%; padding: 12px 16px; border-radius: 12px;
-    border: 2px solid #D5E8E3; font-size: 15px; font-family: inherit;
-    outline: none; background: white; color: var(--text); transition: border-color .2s;
-  }
-  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,127,110,0.12); }
-  .btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 11px 18px; border-radius: 12px; border: none;
-    cursor: pointer; font-weight: 700; font-size: 14px;
-    font-family: inherit; transition: opacity .15s, transform .1s;
-  }
-  .btn:hover { opacity: 0.88; } .btn:active { transform: scale(.97); }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-green   { background: var(--safe); color: white; }
-  .btn-red     { background: var(--danger); color: white; }
-  .btn-grey    { background: #64748B; color: white; }
-  .btn-icon {
-    padding: 9px; border-radius: 10px; border: none; cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    transition: opacity .15s; font-family: inherit; font-size: 16px;
-  }
-  .btn-icon:hover { opacity: 0.8; }
-  #search-row { display: flex; gap: 8px; margin-bottom: 16px; }
-  #search-input { flex: 1; }
-  .food-card { background: var(--card); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .food-card-inner { display: flex; gap: 12px; align-items: flex-start; }
-  .food-thumb-wrap { position: relative; flex-shrink: 0; cursor: zoom-in; }
-  .food-thumb { width: 74px; height: 74px; border-radius: 12px; object-fit: cover; border: 1px solid #EAF2EF; display: block; }
-  .food-no-img { width: 74px; height: 74px; border-radius: 12px; background: var(--primary-lt); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 28px; }
-  .zoom-hint { position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.45); border-radius: 5px; padding: 2px 5px; font-size: 10px; line-height: 1; }
-  .food-info { flex: 1; min-width: 0; }
-  .food-name { font-weight: 700; font-size: 14.5px; line-height: 1.3; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .food-brand { font-size: 11.5px; color: var(--muted); }
-  .food-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .fav-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; font-size: 20px; line-height: 1; }
-  .macros-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
-  .macro-badge { border-radius: 8px; padding: 3px 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
-  .food-add-btn { width: 100%; justify-content: center; margin-top: 12px; }
-  .macro-grid-wrap { background: linear-gradient(135deg, rgba(26,127,110,0.08), rgba(208,240,234,0.5)); border: 1px solid rgba(26,127,110,0.15); border-radius: 18px; padding: 16px; margin-bottom: 12px; }
-  .macro-grid-title { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: var(--primary-dk); }
-  .macro-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
-  .macro-cell { background: white; border-radius: 12px; padding: 10px 6px; text-align: center; }
-  .macro-cell .val { font-size: 19px; font-weight: 800; }
-  .macro-cell .unit { font-size: 10px; opacity: 0.7; }
-  .macro-cell .lbl  { font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .meal-item { background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .meal-item-top { display: flex; gap: 10px; align-items: center; }
-  .meal-thumb { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
-  .meal-no-thumb { width: 50px; height: 50px; border-radius: 10px; background: var(--primary-lt); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-  .meal-item-name { font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .meal-item-sub  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .weight-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-  .weight-display { font-size: 20px; font-weight: 900; color: var(--primary); min-width: 70px; text-align: center; }
-  .weight-display span { font-size: 12px; font-weight: 600; opacity: 0.7; }
-  input[type=range] { width: 100%; accent-color: var(--primary); cursor: pointer; margin-top: 8px; }
-  .range-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .status-banner { border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .status-title { font-weight: 800; font-size: 15px; }
-  .status-sub   { font-size: 13px; color: var(--muted); margin-top: 3px; }
-  .status-right { text-align: right; font-size: 12px; color: var(--muted); }
-  .chart-wrap { position: relative; height: 240px; }
-  .absorb-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #F0F5F3; }
-  .absorb-row:last-child { border-bottom: none; }
-  .absorb-label { font-size: 13px; font-weight: 600; }
-  .absorb-right { display: flex; gap: 10px; align-items: center; }
-  .absorb-g   { font-size: 12px; color: var(--muted); font-weight: 600; }
-  .absorb-min { font-size: 12px; font-weight: 800; border-radius: 8px; padding: 3px 10px; }
-  .setting-card { background: var(--card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; }
-  .setting-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .setting-label { font-weight: 800; font-size: 14px; }
-  .setting-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .setting-val   { border-radius: 10px; padding: 5px 12px; font-weight: 900; font-size: 17px; flex-shrink: 0; margin-left: 10px; }
-  .setting-val span { font-size: 11px; font-weight: 600; opacity: 0.8; }
-  .target-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .target-col label { font-size: 12px; color: var(--muted); font-weight: 600; display: block; margin-bottom: 5px; }
-  .target-col input.input { font-size: 22px; font-weight: 900; text-align: center; color: var(--primary); padding: 10px; }
-  .warning-card { background: #FFFBEB; border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; padding: 14px; margin-bottom: 10px; display: flex; gap: 10px; }
-  .warning-text { font-size: 12px; color: #92400E; line-height: 1.55; }
-  .fav-section-title { font-weight: 800; font-size: 15px; margin: 16px 0 10px; color: var(--primary-dk); }
-  .fav-section-title:first-child { margin-top: 0; }
-  .saved-meal-card { background: var(--card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid #EAF2EF; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .saved-meal-name { font-weight: 800; font-size: 15px; }
-  .saved-meal-sub  { font-size: 12px; color: var(--muted); margin-top: 3px; }
-  .saved-meal-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty-state .emoji { font-size: 52px; margin-bottom: 14px; }
-  .empty-state .title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-  .empty-state .sub   { font-size: 14px; line-height: 1.6; }
-  .loading-state { text-align: center; padding: 50px 20px; color: var(--muted); }
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--primary-lt); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #lightbox { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
-  #lightbox.open { display: flex; }
-  #lightbox img { max-width: 100%; max-height: 85vh; border-radius: 18px; object-fit: contain; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-  #lightbox-close { position: absolute; top: 20px; right: 20px; background: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-  #scanner-modal { display: none; position: fixed; inset: 0; z-index: 1500; background: rgba(0,0,0,0.94); flex-direction: column; align-items: center; justify-content: center; padding: 24px; gap: 0; }
-  #scanner-modal.open { display: flex; }
-  #scanner-modal h2 { color: white; font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-  #scanner-modal > p { color: var(--primary-lt); font-size: 13px; margin-bottom: 20px; }
-  #scanner-video-wrap { position: relative; }
-  #scanner-video { width: 300px; height: 200px; border-radius: 16px; border: 3px solid var(--primary); object-fit: cover; display: block; }
-  #scanner-reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 200px; height: 60px; border: 2px solid var(--primary-lt); border-radius: 8px; opacity: 0.7; pointer-events: none; }
-  #scanner-status { color: var(--primary-lt); font-size: 12px; margin-top: 12px; min-height: 20px; }
-  #scanner-manual-row { display: flex; gap: 10px; margin-top: 20px; }
-  #scanner-manual-row input { width: 200px; }
-  #scanner-hint { color: var(--warn); font-size: 12px; margin-top: 8px; text-align: center; display: none; }
-  #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); z-index: 3000; background: var(--safe); color: white; padding: 10px 22px; border-radius: 24px; font-weight: 700; font-size: 13px; box-shadow: 0 6px 24px rgba(0,0,0,0.2); white-space: nowrap; pointer-events: none; transition: transform .3s cubic-bezier(.22,1,.36,1); }
-  #toast.show { transform: translateX(-50%) translateY(0); }
-  #toast.error { background: var(--danger); }
-  .flex-1  { flex: 1; min-width: 0; }
-  .chart-legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 10px; font-size: 11px; color: var(--muted); }
-  .legend-item { display: flex; align-items: center; gap: 5px; }
-  .legend-line { width: 22px; height: 2px; border-radius: 1px; }
-  .save-meal-row { display: flex; gap: 10px; }
-  .save-meal-row input { flex: 1; }
-  @media (max-width: 400px) {
-    .macro-cell .val { font-size: 16px; }
-    .food-thumb, .food-no-img { width: 62px; height: 62px; }
-  }
-</style>
-</head>
-<body>
-
-<header id="app-header">
-  <div>
-    <h1>💉 GlucosaTrack</h1>
-    <p>Gestión inteligente de insulina</p>
-  </div>
-  <button id="meal-chip" onclick="showTab('meal')">🍽️ <span id="meal-chip-count">0</span> alimentos</button>
-</header>
-
-<main id="main">
-  <!-- SEARCH -->
-  <section id="tab-search" class="tab-section active">
-    <div id="search-row">
-      <input id="search-input" class="input" type="search" placeholder="Buscar alimentos…" autocomplete="off" />
-      <button class="btn btn-primary" onclick="doSearch()" title="Buscar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:20px;height:20px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </button>
-      <button class="btn btn-primary" style="background:var(--primary-dk)" onclick="openScanner()" title="Escanear">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:20px;height:20px"><path d="M3 9V5a2 2 0 0 1 2-2h4M15 3h4a2 2 0 0 1 2 2v4M3 15v4a2 2 0 0 0 2 2h4M15 21h4a2 2 0 0 0 2-2v-4M8 10h8M8 14h4"/></svg>
-      </button>
-    </div>
-    <div id="search-results">
-      <div class="empty-state">
-        <div class="emoji">🥗</div>
-        <div class="title">Busca un alimento</div>
-        <div class="sub">Escribe en el buscador o escanea<br>un código de barras con la cámara</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MEAL -->
-  <section id="tab-meal" class="tab-section">
-    <div class="sec-title">🍽️ Mi Plato</div>
-    <div id="meal-summary"></div>
-    <div id="meal-list"></div>
-    <div id="meal-save-wrap" style="display:none">
-      <div class="card">
-        <div style="font-weight:800;font-size:14px;margin-bottom:10px;color:var(--primary-dk)">💾 Guardar este plato</div>
-        <div class="save-meal-row">
-          <input id="meal-name-input" class="input" placeholder="Nombre del plato…" />
-          <button class="btn btn-primary" onclick="saveMeal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:17px;height:17px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          </button>
-        </div>
-      </div>
-      <button class="btn btn-red" style="width:100%;justify-content:center" onclick="clearMeal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-        Vaciar plato
-      </button>
-    </div>
-    <div id="meal-empty" class="empty-state">
-      <div class="emoji">🥄</div>
-      <div class="title">El plato está vacío</div>
-      <div class="sub">Busca alimentos y añádelos aquí</div>
-      <button class="btn btn-primary" style="margin:16px auto 0;display:flex" onclick="showTab('search')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Buscar alimentos
-      </button>
-    </div>
-  </section>
-
-  <!-- GRAPH -->
-  <section id="tab-graph" class="tab-section">
-    <div class="sec-title">📈 Glucosa Estimada</div>
-    <div id="graph-empty" class="empty-state">
-      <div class="emoji">📊</div>
-      <div class="title">Añade alimentos al plato</div>
-      <div class="sub">La gráfica mostrará la evolución estimada de glucosa en sangre según los tiempos de absorción configurados</div>
-    </div>
-    <div id="graph-content" style="display:none">
-      <div id="status-banner" class="status-banner"></div>
-      <div class="card" style="padding:16px 8px 12px">
-        <div class="chart-wrap"><canvas id="glucose-chart"></canvas></div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-line" style="background:var(--safe)"></div>Mín normal</div>
-          <div class="legend-item"><div class="legend-line" style="background:var(--warn)"></div>Máx objetivo</div>
-          <div class="legend-item"><div class="legend-line" style="background:var(--danger)"></div>Alto (180)</div>
-        </div>
-      </div>
-      <div id="graph-macro-summary"></div>
-      <div class="card">
-        <div style="font-weight:800;font-size:14px;margin-bottom:10px;color:var(--primary-dk)">⏱️ Tiempos de absorción</div>
-        <div id="absorb-list"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAVORITES -->
-  <section id="tab-favorites" class="tab-section">
-    <div class="sec-title">⭐ Favoritos</div>
-    <div id="fav-meals-wrap"></div>
-    <div id="fav-foods-wrap"></div>
-    <div id="fav-empty" class="empty-state">
-      <div class="emoji">⭐</div>
-      <div class="title">Sin favoritos todavía</div>
-      <div class="sub">Pulsa el corazón ❤️ en un alimento para guardarlo, o guarda un plato desde la pestaña Plato</div>
-    </div>
-  </section>
-
-  <!-- SETTINGS -->
-  <section id="tab-settings" class="tab-section">
-    <div class="sec-title">⚙️ Configuración</div>
-    <div id="settings-fields"></div>
-    <div class="card">
-      <div style="font-weight:800;font-size:14px;margin-bottom:12px;color:var(--primary-dk)">🎯 Rango objetivo de glucosa</div>
-      <div class="target-row">
-        <div class="target-col">
-          <label>Mínimo</label>
-          <input id="targetMin" class="input" type="number" min="50" max="300" />
-          <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px">mg/dL</div>
-        </div>
-        <div class="target-col">
-          <label>Máximo</label>
-          <input id="targetMax" class="input" type="number" min="50" max="300" />
-          <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px">mg/dL</div>
-        </div>
-      </div>
-    </div>
-    <div class="warning-card">
-      <span style="font-size:18px;flex-shrink:0;margin-top:1px">⚠️</span>
       <div class="warning-text"><strong>Aviso importante:</strong> Esta aplicación es una herramienta de apoyo educativo. Los cálculos son estimaciones basadas en modelos simplificados y no sustituyen el criterio médico. Consulta siempre a tu endocrinólogo para ajustes de insulina.</div>
     </div>
     <button class="btn btn-grey" style="width:100%;justify-content:center" onclick="resetConfig()">Restaurar valores por defecto</button>
@@ -871,6 +356,11 @@ let meal = [], favFoods = [], favMeals = [];
 let config = { baseGlucose:100, sensitivity:3.5, simpleSugarTime:30, complexCarbTime:90, proteinTime:180, fatTime:300, targetMin:70, targetMax:140 };
 let glucoseChart = null, scanStream = null, scanning = false;
 
+// ── Food registry (avoids passing objects through onclick) ─
+const foodDB = {};
+function registerFood(food) { foodDB[food.id] = food; return food; }
+function getFood(id) { return foodDB[id] || favFoods.find(f=>f.id===id) || null; }
+
 // ── Storage ──────────────────────────────────────────────
 const sv = (k,v) => { try { localStorage.setItem(k,JSON.stringify(v)); } catch {} };
 const ld = (k,d) => { try { const r=localStorage.getItem(k); return r?JSON.parse(r):d; } catch { return d; } };
@@ -878,6 +368,10 @@ function persist() { sv('gt_meal',meal); sv('gt_fav',favFoods); sv('gt_meals',fa
 function loadAll() {
   meal=ld('gt_meal',[]); favFoods=ld('gt_fav',[]); favMeals=ld('gt_meals',[]);
   config={...config,...ld('gt_cfg',{})};
+  // Register all loaded foods in foodDB
+  meal.forEach(({food}) => registerFood(food));
+  favFoods.forEach(f => registerFood(f));
+  favMeals.forEach(m => m.items.forEach(({food}) => registerFood(food)));
 }
 
 // ── Helpers ──────────────────────────────────────────────
@@ -889,8 +383,8 @@ function extractNutrition(p) {
   const n=p.nutriments||{};
   const carbs=n['carbohydrates_100g']||0;
   const sugars=Math.min(n['sugars_100g']||0,carbs);
-  return {
-    id: p.id||p.code||String(Math.random()),
+  const food = {
+    id: String(p.id||p.code||Math.random()),
     name: p.product_name||p.product_name_en||p.product_name_fr||'Producto desconocido',
     brand: p.brands||'',
     kcal: n['energy-kcal_100g']||Math.round((n['energy_100g']||0)/4.184),
@@ -899,6 +393,8 @@ function extractNutrition(p) {
     image: p.image_thumb_url||p.image_front_thumb_url||null,
     imageFull: p.image_url||p.image_front_url||null,
   };
+  registerFood(food);
+  return food;
 }
 
 function totals() {
@@ -910,7 +406,6 @@ function totals() {
 }
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-function escJ(o){ return "'"+JSON.stringify(o).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'"; }
 
 // ── Toast ────────────────────────────────────────────────
 let tTimer;
@@ -971,16 +466,18 @@ function badge(color,emoji,val,lbl) {
 }
 
 function buildFoodCard(food, showAdd=true) {
+  registerFood(food); // ensure it's in the registry
   const isFav=favFoods.some(f=>f.id===food.id);
   const inMeal=meal.some(i=>i.food.id===food.id);
-  const fj=escJ(food);
+  const fid=esc(food.id); // safe ID for onclick
+  const fullImgUrl=esc(food.imageFull||food.image||'');
   const imgHtml = food.image
-    ? `<div class="food-thumb-wrap" onclick="openLightbox('${(food.imageFull||food.image).replace(/'/g,"\\'")}')">
+    ? `<div class="food-thumb-wrap" onclick="openLightbox('${fullImgUrl}')">
          <img class="food-thumb" src="${food.image}" alt="${esc(food.name)}" onerror="this.parentElement.outerHTML='<div class=food-no-img>🥗</div>'">
          <div class="zoom-hint">🔍</div></div>`
     : `<div class="food-no-img">🥗</div>`;
-  const addBtn = showAdd ? `<button class="btn ${inMeal?'btn-green':'btn-primary'} food-add-btn" onclick="addToMeal(${fj})">${inMeal?'✓ En el plato':'+ Añadir al plato'}</button>` : '';
-  return `<div class="food-card">
+  const addBtn = showAdd ? `<button class="btn ${inMeal?'btn-green':'btn-primary'} food-add-btn" id="addbtn-${fid}" onclick="addToMeal('${fid}')">${inMeal?'✓ En el plato':'+ Añadir al plato'}</button>` : '';
+  return `<div class="food-card" data-fid="${fid}">
     <div class="food-card-inner">
       ${imgHtml}
       <div class="food-info">
@@ -989,7 +486,7 @@ function buildFoodCard(food, showAdd=true) {
             <div class="food-name" title="${esc(food.name)}">${esc(food.name)}</div>
             ${food.brand?`<div class="food-brand">${esc(food.brand)}</div>`:''}
           </div>
-          <button class="fav-btn" onclick="toggleFavFood(${fj})" title="Favorito">${isFav?'❤️':'🤍'}</button>
+          <button class="fav-btn" id="favbtn-${fid}" onclick="toggleFavFood('${fid}')" title="Favorito">${isFav?'❤️':'🤍'}</button>
         </div>
         <div class="macros-row">
           ${badge('#F59E0B','🔥',rnd(food.kcal),'kcal')}
@@ -1009,30 +506,52 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){ closeLightbox(); s
 
 // ── Scanner ──────────────────────────────────────────────
 async function openScanner() {
-  document.getElementById('scanner-modal').classList.add('open');
+  const modal = document.getElementById('scanner-modal');
+  modal.classList.add('open');
   document.getElementById('barcode-input').value='';
-  document.getElementById('scanner-status').textContent='Iniciando cámara…';
   document.getElementById('scanner-hint').style.display='none';
+  document.getElementById('scanner-status').textContent='Iniciando cámara…';
   scanning=true;
+
+  // Check secure context (required for camera in most browsers)
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    document.getElementById('scanner-status').textContent='⚠️ La cámara requiere conexión segura (HTTPS) o localhost';
+    document.getElementById('scanner-hint').style.display='block';
+    return;
+  }
+
   try {
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}});
     scanStream=stream;
-    const v=document.getElementById('scanner-video'); v.srcObject=stream; await v.play();
+    const v=document.getElementById('scanner-video');
+    v.srcObject=stream;
+    await v.play();
     document.getElementById('scanner-status').textContent='';
+
     if('BarcodeDetector' in window) {
       document.getElementById('scanner-status').textContent='🟢 Detección automática activa…';
       const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','qr_code']});
       const loop=async()=>{
         if(!scanning) return;
-        try { const c=await det.detect(v); if(c.length){stopScanner();lookupBarcode(c[0].rawValue);return;} } catch {}
+        try {
+          const codes=await det.detect(v);
+          if(codes.length){ stopScanner(); lookupBarcode(codes[0].rawValue); return; }
+        } catch {}
         if(scanning) requestAnimationFrame(loop);
       };
       setTimeout(loop,500);
     } else {
       document.getElementById('scanner-hint').style.display='block';
-      document.getElementById('scanner-status').textContent='Introduce el código manualmente';
+      document.getElementById('scanner-status').textContent='📷 Cámara activa — introduce el código manualmente';
     }
-  } catch { toast('No se puede acceder a la cámara','err'); stopScanner(); }
+  } catch(err) {
+    let msg = 'No se puede acceder a la cámara';
+    if(err.name==='NotAllowedError') msg='❌ Permiso denegado — permite el acceso a la cámara en tu navegador';
+    else if(err.name==='NotFoundError') msg='❌ No se detectó ninguna cámara en este dispositivo';
+    else if(err.name==='NotReadableError') msg='❌ La cámara está en uso por otra aplicación';
+    document.getElementById('scanner-status').textContent=msg;
+    document.getElementById('scanner-hint').style.display='block';
+  }
 }
 
 function stopScanner() {
@@ -1042,11 +561,16 @@ function stopScanner() {
 }
 
 // ── Meal ─────────────────────────────────────────────────
-function addToMeal(food) {
+function addToMeal(id) {
+  const food = getFood(id);
+  if(!food){ console.warn('Food not found in registry:', id); return; }
   const idx=meal.findIndex(i=>i.food.id===food.id);
   if(idx>=0) meal[idx].weight+=100; else meal.push({food,weight:100});
   persist(); updateMealChip();
   toast((food.name||'Alimento').slice(0,30)+' añadido ✓');
+  // Update the add button state without re-rendering the whole list
+  const btn = document.getElementById('addbtn-'+esc(id));
+  if(btn){ btn.className='btn btn-green food-add-btn'; btn.textContent='✓ En el plato'; }
 }
 
 function removeFromMeal(id){ meal=meal.filter(i=>i.food.id!==id); persist(); updateMealChip(); renderMeal(); }
@@ -1139,11 +663,17 @@ function buildMacroGrid(t,title) {
 }
 
 // ── Favorites ────────────────────────────────────────────
-function toggleFavFood(food) {
+function toggleFavFood(id) {
+  const food = getFood(id);
+  if(!food){ console.warn('Food not found in registry:', id); return; }
   const idx=favFoods.findIndex(f=>f.id===food.id);
   if(idx>=0){ favFoods.splice(idx,1); toast('Eliminado de favoritos'); }
   else { favFoods.push(food); toast('Añadido a favoritos ❤️'); }
   persist();
+  // Update all heart buttons for this food
+  document.querySelectorAll(`[id="favbtn-${esc(id)}"]`).forEach(btn => {
+    btn.textContent = idx>=0 ? '🤍' : '❤️';
+  });
 }
 
 function renderFavorites() {
@@ -1291,4 +821,3 @@ loadAll(); updateMealChip(); renderSettings();
 </script>
 </body>
 </html>
-
