@@ -84,6 +84,9 @@ input[type=range]{width:100%;accent-color:var(--primary);cursor:pointer;margin-t
 .status-right{text-align:right;font-size:12px;color:var(--muted);flex-shrink:0}
 .chart-wrap{position:relative;height:260px}
 .chart-legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--muted)}
+.curve-toggle-wrap{display:flex;flex-wrap:wrap;gap:8px;margin:0 8px 10px}
+.curve-toggle{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #E2EDEA;border-radius:999px;font-size:11px;font-weight:700;background:#fff;color:var(--text)}
+.curve-toggle input{margin:0}
 .legend-item{display:flex;align-items:center;gap:5px}
 .legend-line{width:22px;height:2px;border-radius:1px}
 .cond-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -95,6 +98,8 @@ input[type=range]{width:100%;accent-color:var(--primary);cursor:pointer;margin-t
 .dose-row:last-child{border-bottom:none}
 .dose-pill{background:rgba(139,92,246,.12);color:var(--insulin);font-weight:800;font-size:13px;border-radius:8px;padding:4px 10px;white-space:nowrap;flex-shrink:0}
 .dose-time{font-size:12px;color:var(--muted);font-weight:600;flex:1}
+.dose-real{font-size:11px;color:var(--primary-dk);font-weight:800;margin-top:2px}
+.drag-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:6px}
 .dose-del{background:#FEF2F2;border:none;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:14px}
 .breakdown-table{width:100%;border-collapse:collapse;font-size:12px}
 .breakdown-table th{text-align:right;color:var(--muted);font-weight:700;padding:5px 6px;border-bottom:2px solid #EAF2EF}
@@ -267,10 +272,13 @@ select.input{-webkit-appearance:none;appearance:none;background-image:url("data:
 
       <!-- Status banner -->
       <div id="status-banner" class="status-banner"></div>
+      <div id="risk-banner" style="display:none"></div>
 
       <!-- Chart -->
       <div class="card" style="padding:16px 8px 12px">
-        <div class="chart-wrap"><canvas id="glucose-chart"></canvas></div>
+        <div class="card-title" style="padding:0 8px 6px">Curvas visibles</div>
+        <div id="curve-toggles" class="curve-toggle-wrap"></div>
+        <div class="chart-wrap"><canvas id="glucose-chart"></canvas></div><div class="drag-hint">💉 Arrastra la jeringa sobre la gráfica para mover la dosis en tiempo real</div>
         <div class="chart-legend" id="chart-legend"></div>
       </div>
 
@@ -328,6 +336,7 @@ select.input{-webkit-appearance:none;appearance:none;background-image:url("data:
         </div>
         <div id="dose-list"></div>
         <div id="dose-empty" style="font-size:13px;color:var(--muted);padding:10px 0;text-align:center">Sin dosis simuladas</div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px" onclick="saveCurrentHistory()">💾 Guardar esta simulación</button>
       </div>
 
       <!-- Desglose por alimento -->
@@ -354,6 +363,23 @@ select.input{-webkit-appearance:none;appearance:none;background-image:url("data:
       <div class="emoji">⭐</div>
       <div class="title">Sin favoritos todavía</div>
       <div class="sub">Pulsa el corazón ❤️ en un alimento para guardarlo, o guarda un plato desde la pestaña Plato</div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="tab-history" class="tab-section">
+    <div class="sec-title">🕘 Historial</div>
+    <div class="card">
+      <div class="card-title">📚 Registro local</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.55">Guarda simulaciones para comparar si la dosis quedó corta, correcta o larga. Puedes anotar el pico y mínimo reales y ver la desviación frente a la estimación.</div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px" onclick="saveCurrentHistory()">💾 Guardar simulación actual</button>
+    </div>
+    <div id="history-summary"></div>
+    <div id="history-list"></div>
+    <div id="history-empty" class="empty-state">
+      <div class="emoji">🕘</div>
+      <div class="title">Todavía no hay registros</div>
+      <div class="sub">Guarda una simulación desde aquí o desde la pestaña Gráfica para comparar dosis y resultados.</div>
     </div>
   </section>
 
@@ -388,6 +414,10 @@ select.input{-webkit-appearance:none;appearance:none;background-image:url("data:
   </button>
   <button class="nav-btn" id="nav-favorites" onclick="showTab('favorites')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Favoritos
+  </button>
+
+  <button class="nav-btn" id="nav-history" onclick="showTab('history')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v5l3 3"/><circle cx="12" cy="12" r="9"/></svg>Historial
   </button>
   <button class="nav-btn" id="nav-settings" onclick="showTab('settings')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Config
@@ -424,15 +454,21 @@ select.input{-webkit-appearance:none;appearance:none;background-image:url("data:
 
 <script>
 // ═══ STATE ════════════════════════════════════════════════
-let meal=[],favFoods=[],favMeals=[],insulinDoses=[];
+let meal=[],favFoods=[],favMeals=[],insulinDoses=[],historyEntries=[];
 let conditions={sick:false,mens:false};
 let config={
-  baseGlucose:100, sensitivity:3.5,
-  simpleSugarTime:30, complexCarbTime:90, proteinTime:180, fatTime:300,
-  insulinSensitivity:50, insulinPeakTime:75, insulinDuration:240,
+  baseGlucose:100, sensitivity:3.5, carbRatio:10,
+  simpleSugarTime:30, complexCarbTime:95, proteinTime:240, fatTime:320,
+  simpleDuration:90, complexDuration:240, proteinDuration:360, fatDuration:480,
+  proteinImpactFactor:1.0, fatImpactFactor:1.0, fatCarbDelayPer10g:10,
+  basalDecayPerHour:2.4,
+  insulinSensitivity:50, insulinOnset:15, insulinPeakTime:75, insulinDuration:240,
   sickMultiplier:1.5, menstruationMultiplier:1.3,
-  targetMin:70, targetMax:140
+  targetMin:70, targetMax:140,
+  maxAutoDosePerShot:8, maxAutoTotalDose:18, doseRoundStep:0.5,
+  deviceType:'pump', doseMin:0.1, hypoThreshold:70
 };
+let curveVisibility={basal:true,simple:true,complex:true,protein:true,fat:true,total:true,withIns:true,insEffect:true};
 let glucoseChart=null,scanStream=null,scanning=false;
 const foodDB={};
 function registerFood(f){foodDB[f.id]=f;return f;}
@@ -441,10 +477,10 @@ function getFood(id){return foodDB[id]||favFoods.find(f=>f.id===id)||null;}
 // ═══ PERSIST (localStorage) ═══════════════════════════════
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}};
 const ld=(k,d)=>{try{const r=localStorage.getItem(k);return r?JSON.parse(r):d;}catch{return d;}};
-function persist(){sv('gt_meal',meal);sv('gt_fav',favFoods);sv('gt_meals',favMeals);sv('gt_cfg',config);sv('gt_doses',insulinDoses);}
+function persist(){sv('gt_meal',meal);sv('gt_fav',favFoods);sv('gt_meals',favMeals);sv('gt_cfg',config);sv('gt_doses',insulinDoses);sv('gt_curve_vis',curveVisibility);sv('gt_history',historyEntries);}
 function loadAll(){
-  meal=ld('gt_meal',[]);favFoods=ld('gt_fav',[]);favMeals=ld('gt_meals',[]);
-  config={...config,...ld('gt_cfg',{})};insulinDoses=ld('gt_doses',[]);
+  meal=ld('gt_meal',[]);favFoods=ld('gt_fav',[]);favMeals=ld('gt_meals',[]);historyEntries=ld('gt_history',[]);
+  config={...config,...ld('gt_cfg',{})};insulinDoses=ld('gt_doses',[]);curveVisibility={...curveVisibility,...ld('gt_curve_vis',{})};
   meal.forEach(({food})=>registerFood(food));
   favFoods.forEach(f=>registerFood(f));
   favMeals.forEach(m=>m.items.forEach(({food})=>registerFood(food)));
@@ -565,6 +601,7 @@ const r1=n=>Math.round(n*10)/10;
 const r2=n=>Math.round(n*100)/100;
 const rnd=n=>Math.round(n);
 const gaussian=(t,mu,sig,amp)=>amp*Math.exp(-0.5*((t-mu)/sig)**2);
+const clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
 
 function condMult(){
   let m=1;
@@ -574,7 +611,11 @@ function condMult(){
 }
 function startGlucose(){
   const el=document.getElementById('current-glucose');
-  if(el){const v=parseFloat(el.value);if(!isNaN(v)&&v>0)return v;}
+  if(el){
+    const v=parseFloat(el.value);
+    if(!isNaN(v)&&v>0)return v;
+    el.placeholder='Ej: '+config.baseGlucose;
+  }
   return config.baseGlucose;
 }
 function getMealOffset(){
@@ -582,185 +623,297 @@ function getMealOffset(){
   if(el){const v=parseFloat(el.value);if(!isNaN(v))return Math.max(0,v);}
   return 0;
 }
+function getBaseDate(){
+  const now=new Date();
+  now.setSeconds(0,0);
+  return now;
+}
+function formatClockFromOffset(minOffset){
+  const d=getBaseDate();
+  d.setMinutes(d.getMinutes()+Math.round(minOffset));
+  return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+}
+function formatDoseTimeLabel(min){
+  if(min===0)return 'Al inicio';
+  return min<0?`${Math.abs(min)} min antes`:`${min} min después`;
+}
+function applyDevicePreset(type){
+  config.deviceType=type;
+  if(type==='pen'){config.doseRoundStep=1;config.doseMin=1;}
+  else if(type==='accuchek'){config.doseRoundStep=0.1;config.doseMin=0.1;}
+  else {config.doseRoundStep=0.1;config.doseMin=0.1;}
+  persist();
+  const doseUnits=document.getElementById('dose-units');
+  if(doseUnits){doseUnits.step=config.doseRoundStep; doseUnits.min=config.doseMin; doseUnits.value=Math.max(config.doseMin, roundDose(parseFloat(doseUnits.value)||config.doseMin));}
+  renderSettings();
+  renderDoseList();
+  scheduleGraph();
+}
+function syncDoseInputs(){
+  const doseUnits=document.getElementById('dose-units');
+  if(doseUnits){doseUnits.step=config.doseRoundStep; doseUnits.min=config.doseMin;}
+}
+function betaShape01(x,a,b){
+  if(x<=0||x>=1)return 0;
+  return Math.pow(x,Math.max(.7,a-1))*Math.pow(1-x,Math.max(.7,b-1));
+}
+function addDistributedLoad(arr,times,total,start,peak,end){
+  if(total<=0||end<=start||peak<=start||peak>=end)return;
+  const peakNorm=(peak-start)/(end-start);
+  const a=clamp(1+peakNorm*6,1.2,7);
+  const b=clamp(1+(1-peakNorm)*6,1.2,7);
+  const weights=times.map(t=>{
+    if(t<start||t>end)return 0;
+    const x=(t-start)/(end-start);
+    return betaShape01(x,a,b);
+  });
+  const sum=weights.reduce((s,v)=>s+v,0);
+  if(sum<=0)return;
+  for(let i=0;i<arr.length;i++)arr[i]+=total*(weights[i]/sum);
+}
+function warsawDurationMinutes(ugp){
+  if(ugp<=0)return 0;
+  if(ugp<=1)return 180;
+  if(ugp<=2)return 240;
+  if(ugp<=3)return 300;
+  if(ugp<=4)return 480;
+  return clamp(480+Math.round((ugp-4)*45),480,600);
+}
+function getWarsawMealData(){
+  const t=totals();
+  const fpKcal=t.fats*9*config.fatImpactFactor+t.proteins*4*config.proteinImpactFactor;
+  const ugp=fpKcal/100;
+  const carbEq=t.carbs+(fpKcal/10);
+  const fpEq=fpKcal/10;
+  const effISF=config.insulinSensitivity/condMult();
+  return {totals:t,fpKcal,ugp,fpEq,fpUnits:fpEq/Math.max(1,config.carbRatio),carbUnits:t.carbs/Math.max(1,config.carbRatio),
+          totalMealUnits:carbEq/Math.max(1,config.carbRatio), extendedMinutes:warsawDurationMinutes(ugp), effISF};
+}
 
-// Build base glucose curve (no insulin)
-function buildGlucoseCurve(){
-  const labels=[],values=[];
-  const mult=condMult(),base=startGlucose(),off=getMealOffset();
-  for(let t=-30;t<=510;t+=5){
-    let g=base;
-    meal.forEach(({food,weight})=>{
-      const r=weight/100,mt=t-off;
-      if(mt<0)return;
-      g+=gaussian(mt,config.simpleSugarTime,22, food.sugars*r*config.sensitivity*mult);
-      g+=gaussian(mt,config.complexCarbTime, 50, food.complexCarbs*r*config.sensitivity*mult*0.65);
-      g+=gaussian(mt,config.proteinTime,     70, food.proteins*r*config.sensitivity*mult*0.2);
-      g+=gaussian(mt,config.fatTime,        100, food.fats*r*config.sensitivity*mult*0.08);
-    });
+function buildMetabolicModel(){
+  const labels=[],times=[];
+  for(let t=-30;t<=600;t+=5){
     const h=Math.floor(Math.abs(t)/60),m=Math.abs(t)%60;
     labels.push((t<0?'-':'')+h+'h'+(m>0?String(m).padStart(2,'0'):''));
-    values.push(Math.round(g));
+    times.push(t);
   }
-  return{labels,values};
+  const mult=condMult(),start=startGlucose(),off=getMealOffset();
+  const floor=Math.max(40,config.targetMin-25);
+  const effISF=config.insulinSensitivity/mult;
+  const simpleRate=new Array(times.length).fill(0), complexRate=new Array(times.length).fill(0), proteinRate=new Array(times.length).fill(0), fatRate=new Array(times.length).fill(0);
+
+  meal.forEach(({food,weight})=>{
+    const r=weight/100;
+    const sugarG=(food.sugars||0)*r;
+    const complexG=(food.complexCarbs||0)*r;
+    const proteinG=(food.proteins||0)*r;
+    const fatG=(food.fats||0)*r;
+    const fatDelay=(fatG/10)*config.fatCarbDelayPer10g;
+    const sugarLoad=(sugarG/Math.max(1,config.carbRatio))*effISF;
+    const complexLoad=(complexG/Math.max(1,config.carbRatio))*effISF;
+    const proteinEq=(proteinG*4/10)*config.proteinImpactFactor;
+    const fatEq=(fatG*9/10)*config.fatImpactFactor;
+    const proteinLoad=(proteinEq/Math.max(1,config.carbRatio))*effISF;
+    const fatLoad=(fatEq/Math.max(1,config.carbRatio))*effISF;
+    const itemUGP=(proteinG*4*config.proteinImpactFactor + fatG*9*config.fatImpactFactor)/100;
+    const extDur=warsawDurationMinutes(itemUGP);
+
+    addDistributedLoad(simpleRate,times,sugarLoad,off,off+Math.max(10,config.simpleSugarTime),off+Math.max(config.simpleDuration,config.simpleSugarTime+25)+fatDelay*0.15);
+    addDistributedLoad(complexRate,times,complexLoad,off+10+fatDelay*0.2,off+config.complexCarbTime+fatDelay*0.55,off+Math.max(config.complexDuration,config.complexCarbTime+80)+fatDelay);
+    addDistributedLoad(proteinRate,times,proteinLoad,off+60+fatDelay*0.35,off+config.proteinTime+fatDelay*0.75,off+Math.max(config.proteinDuration,extDur||config.proteinDuration));
+    addDistributedLoad(fatRate,times,fatLoad,off+90,off+config.fatTime+fatDelay,off+Math.max(config.fatDuration,(extDur?extDur+60:config.fatDuration)+(fatG/10)*20));
+  });
+
+  const basal=[],simple=[],complex=[],protein=[],fat=[],totalNutrients=[],glucoseNoIns=[];
+  let cs=0,cc=0,cp=0,cf=0;
+  for(let i=0;i<times.length;i++){
+    const minutesSinceStart=Math.max(0,times[i]+30);
+    const base=Math.max(floor,start-(config.basalDecayPerHour*(minutesSinceStart/60)));
+    cs+=simpleRate[i]; cc+=complexRate[i]; cp+=proteinRate[i]; cf+=fatRate[i];
+    const nutrients=cs+cc+cp+cf;
+    basal.push(r1(base));
+    simple.push(r1(cs));
+    complex.push(r1(cc));
+    protein.push(r1(cp));
+    fat.push(r1(cf));
+    totalNutrients.push(r1(nutrients));
+    glucoseNoIns.push(r1(base+nutrients));
+  }
+  return {labels,times,basal,simple,complex,protein,fat,totalNutrients,glucoseNoIns,simpleRate,complexRate,proteinRate,fatRate,startGlucose:start};
 }
 
-// Insulin activity for one dose at each time point (returns glucose reduction array)
-function doseEffect(doseTime,units){
-  const eff=[];
-  const sigma=config.insulinDuration/4;
-  const effectiveISF=config.insulinSensitivity/condMult();
-  for(let t=-30;t<=510;t+=5){
-    const tRel=t-doseTime-config.insulinPeakTime;
-    eff.push(gaussian(tRel,0,sigma,units*effectiveISF));
-  }
-  return eff;
+function buildGlucoseCurve(){
+  const model=buildMetabolicModel();
+  return {labels:model.labels,values:model.glucoseNoIns};
 }
 
-// Total insulin activity curve (for display, normalized to visible amplitude)
-function buildInsulinActivity(){
-  const vals=new Array(109).fill(0);
+function insulinProgress(minutesSinceDose){
+  if(minutesSinceDose<=config.insulinOnset)return 0;
+  if(minutesSinceDose>=config.insulinDuration)return 1;
+  const activeMinutes=minutesSinceDose-config.insulinOnset;
+  const totalActive=Math.max(1,config.insulinDuration-config.insulinOnset);
+  const peak=Math.max(config.insulinOnset+10,config.insulinPeakTime)-config.insulinOnset;
+  const x=Math.max(0,Math.min(1,activeMinutes/totalActive));
+  const peakNorm=Math.max(0.08,Math.min(0.92,peak/totalActive));
+  const leftPow=Math.max(1.2,peakNorm*6);
+  const rightPow=Math.max(1.2,(1-peakNorm)*6);
+  const beta=(z)=>Math.pow(z,leftPow)*Math.pow(1-z,rightPow);
+  let acc=0, norm=0;
+  const steps=60;
+  for(let i=1;i<=steps;i++){
+    const zi=i/steps;
+    const val=beta(zi);
+    norm+=val;
+    if(zi<=x)acc+=val;
+  }
+  return norm>0?Math.max(0,Math.min(1,acc/norm)):0;
+}
+
+function insulinActivityAt(minutesSinceDose){
+  if(minutesSinceDose<=config.insulinOnset||minutesSinceDose>=config.insulinDuration)return 0;
+  const activeMinutes=minutesSinceDose-config.insulinOnset;
+  const totalActive=Math.max(1,config.insulinDuration-config.insulinOnset);
+  const x=Math.max(0,Math.min(1,activeMinutes/totalActive));
+  const peak=Math.max(config.insulinOnset+10,config.insulinPeakTime)-config.insulinOnset;
+  const peakNorm=Math.max(0.08,Math.min(0.92,peak/totalActive));
+  const leftPow=Math.max(1.2,peakNorm*6);
+  const rightPow=Math.max(1.2,(1-peakNorm)*6);
+  const raw=Math.pow(x,leftPow)*Math.pow(1-x,rightPow);
+  const peakRaw=Math.pow(peakNorm,leftPow)*Math.pow(1-peakNorm,rightPow);
+  return peakRaw>0?raw/peakRaw:0;
+}
+
+function buildInsulinActivity(model){
+  const vals=new Array(model.times.length).fill(0);
   insulinDoses.forEach(d=>{
-    doseEffect(d.time,d.units).forEach((v,i)=>vals[i]+=v);
+    model.times.forEach((t,i)=>{ vals[i]+=insulinActivityAt(t-d.time)*d.units; });
   });
   return vals;
 }
-
-// Glucose curve WITH all insulin doses applied
-function buildGlucoseWithInsulin(glucoseVals){
-  if(!insulinDoses.length)return null;
-  const result=glucoseVals.map(v=>v);
+function buildInsulinRate(model){
+  const mult=condMult();
+  const effISF=config.insulinSensitivity/mult;
+  const rate=new Array(model.times.length).fill(0);
   insulinDoses.forEach(d=>{
-    doseEffect(d.time,d.units).forEach((red,i)=>{result[i]=Math.max(40,result[i]-red);});
+    addDistributedLoad(rate,model.times,d.units*effISF,d.time+config.insulinOnset,d.time+config.insulinPeakTime,d.time+config.insulinDuration);
   });
-  return result;
+  return rate;
 }
 
-function recommendInsulin(gVals){
-  const peak=Math.max(...gVals);
-  const excess=peak-config.targetMax;
-  if(excess<=0)return 0;
-  return Math.max(0,r2(excess/(config.insulinSensitivity/condMult())));
+function buildGlucoseWithInsulin(model){
+  if(!insulinDoses.length)return null;
+  const target=(config.targetMin+config.targetMax)/2;
+  const floor=Math.max(40,config.targetMin-30);
+  const correctionPool=Math.max(0,model.startGlucose-target);
+  const insRate=buildInsulinRate(model);
+  const result=[],insulinEffect=[],hypoDepth=[];
+  let delivered=0;
+  for(let i=0;i<model.times.length;i++){
+    delivered+=insRate[i];
+    const availableLoad=model.totalNutrients[i]+correctionPool;
+    const rawGlucose=model.basal[i]+model.totalNutrients[i]-delivered;
+    const applied=Math.min(delivered,availableLoad);
+    insulinEffect.push(r1(applied));
+    hypoDepth.push(r1(Math.max(0, model.basal[i]-rawGlucose)));
+    result.push(r1(Math.max(floor,rawGlucose)));
+  }
+  return {glucose:result,effect:insulinEffect,rate:insRate,hypoDepth};
+}
+
+function recommendInsulin(model){
+  const target=(config.targetMin+config.targetMax)/2;
+  const w=getWarsawMealData();
+  const effISF=w.effISF;
+  const correctionUnits=Math.max(0,startGlucose()-target)/Math.max(1,effISF);
+  const totalUnits=w.carbUnits+w.fpUnits+correctionUnits;
+  const rounded=Math.round(totalUnits/Math.max(.1,config.doseRoundStep))*config.doseRoundStep;
+  return Math.max(0,r2(Math.min(config.maxAutoTotalDose,rounded)));
 }
 
 // ═══ AUTO-OPTIMIZER ═══════════════════════════════════════
-// Finds optimal dose timing(s) and units using a greedy + binary-search approach.
-// For each candidate time, binary-search the units that bring peak to targetMax.
-// Then picks the combination that minimises the area-above-target + area-below-min.
-
+// Safer deterministic plan based on carb ratio + Warsaw fat/protein units.
 function scoreCurve(gVals){
-  // Lower is better: penalise excursions above max and below min
   return gVals.reduce((s,v)=>{
     if(v>config.targetMax) s+=(v-config.targetMax)**2;
-    if(v<config.targetMin) s+=(config.targetMin-v)**2;
+    if(v<config.targetMin) s+=(config.targetMin-v)**2*1.4;
     return s;
   },0);
 }
 
 function applyDosesToBase(gBase,doses){
-  const result=gBase.map(v=>v);
-  doses.forEach(({time,units})=>{
-    doseEffect(time,units).forEach((red,i)=>{result[i]=Math.max(40,result[i]-red);});
-  });
-  return result;
+  const prev=insulinDoses;
+  insulinDoses=doses.map(d=>({...d}));
+  const model=buildMetabolicModel();
+  const withIns=buildGlucoseWithInsulin(model);
+  insulinDoses=prev;
+  return withIns?withIns.glucose:gBase.map(v=>v);
 }
 
-// Binary search: for a given time, find units that bring max(curve) as close to targetMax as possible
-function binarySearchUnits(gBase,existingDoses,newTime,maxUnits=30){
-  let lo=0,hi=maxUnits,best=0;
-  for(let i=0;i<20;i++){
-    const mid=(lo+hi)/2;
-    const curve=applyDosesToBase(gBase,[...existingDoses,{time:newTime,units:mid}]);
-    const peak=Math.max(...curve);
-    if(peak>config.targetMax){lo=mid;best=mid;}
-    else{hi=mid;best=mid;}
-  }
-  return r2(Math.max(0,best));
+function roundDose(v){
+  const step=Math.max(config.doseMin||0.1,config.doseRoundStep);
+  const rounded=r2(Math.round(v/step)*step);
+  return rounded<=0?0:Math.max(config.doseMin||step,rounded);
 }
 
 function autoOptimize(){
-  const{values:gBase}=buildGlucoseCurve();
   const strategy=document.getElementById('opt-strategy').value;
-  const nDoses={single:1,split:2,triple:3}[strategy]||1;
+  const w=getWarsawMealData();
+  const target=(config.targetMin+config.targetMax)/2;
+  const correctionUnits=Math.max(0,startGlucose()-target)/Math.max(1,w.effISF);
+  const carbUnits=w.carbUnits;
+  const fpUnits=w.fpUnits;
+  const extMin=w.extendedMinutes;
+  let doses=[];
 
-  // Candidate pre-bolus times (relative to meal start: negative = before)
-  const candidateTimes=[-30,-20,-15,-10,-5,0,5,10,15,20,30];
-
-  let bestDoses=null,bestScore=Infinity;
-
-  if(nDoses===1){
-    // Try each candidate time
-    for(const t of candidateTimes){
-      const u=binarySearchUnits(gBase,[],t);
-      if(u<=0)continue;
-      const curve=applyDosesToBase(gBase,[{time:t,units:u}]);
-      const score=scoreCurve(curve);
-      if(score<bestScore){bestScore=score;bestDoses=[{time:t,units:u}];}
-    }
-  }else if(nDoses===2){
-    // Try pairs: first dose (pre/peri) + second dose (post)
-    const firstTimes=[-20,-15,-10,-5,0];
-    const secondTimes=[0,15,30,45,60,90];
-    for(const t1 of firstTimes){
-      for(const t2 of secondTimes){
-        if(t2<=t1)continue;
-        // First dose: ~60% of total
-        const u1=binarySearchUnits(gBase,[],t1)*0.6;
-        if(u1<0.5)continue;
-        const u2=binarySearchUnits(gBase,[{time:t1,units:u1}],t2);
-        if(u2<0.5)continue;
-        const curve=applyDosesToBase(gBase,[{time:t1,units:u1},{time:t2,units:u2}]);
-        const score=scoreCurve(curve);
-        if(score<bestScore){bestScore=score;bestDoses=[{time:t1,units:r2(u1)},{time:t2,units:r2(u2)}];}
-      }
-    }
+  if(strategy==='single' || fpUnits<0.5){
+    doses=[{time:-10,units:roundDose(carbUnits+fpUnits+correctionUnits)}];
+  }else if(strategy==='split'){
+    const first=carbUnits + correctionUnits*0.85 + fpUnits*0.35;
+    const second=Math.max(0,fpUnits*0.65 + correctionUnits*0.15);
+    doses=[{time:-10,units:roundDose(first)},{time:Math.min(120,Math.max(45,Math.round((extMin||240)*0.35/5)*5)),units:roundDose(second)}];
   }else{
-    // Triple: pre + peri + correction
-    const d1={time:-15,units:0},d2={time:0,units:0},d3={time:60,units:0};
-    d1.units=r2(binarySearchUnits(gBase,[],d1.time)*0.5);
-    d2.units=r2(binarySearchUnits(gBase,[d1],d2.time)*0.6);
-    d3.units=r2(binarySearchUnits(gBase,[d1,d2],d3.time));
-    bestDoses=[d1,d2,d3].filter(d=>d.units>=0.5);
+    const first=carbUnits + correctionUnits*0.8 + fpUnits*0.25;
+    const second=fpUnits*0.4;
+    const third=Math.max(0,fpUnits*0.35 + correctionUnits*0.2);
+    doses=[
+      {time:-10,units:roundDose(first)},
+      {time:Math.min(120,Math.max(45,Math.round((extMin||300)*0.30/5)*5)),units:roundDose(second)},
+      {time:Math.min(240,Math.max(120,Math.round((extMin||300)*0.70/5)*5)),units:roundDose(third)}
+    ];
   }
 
-  if(!bestDoses||!bestDoses.length){
-    const res=document.getElementById('opt-result');
-    res.style.display='block';
-    res.innerHTML=`<div style="color:var(--safe);font-weight:700;font-size:13px">✅ La curva ya está dentro del rango — no se necesita insulina</div>`;
-    return;
+  doses=doses.filter(d=>d.units>=config.doseRoundStep/2).map(d=>({...d,units:Math.min(config.maxAutoDosePerShot,d.units)}));
+  let total=doses.reduce((s,d)=>s+d.units,0);
+  if(total>config.maxAutoTotalDose && total>0){
+    const scale=config.maxAutoTotalDose/total;
+    doses=doses.map(d=>({...d,units:roundDose(d.units*scale)})).filter(d=>d.units>=config.doseRoundStep/2);
+    total=doses.reduce((s,d)=>s+d.units,0);
   }
 
-  // Round to nearest 0.5U
-  bestDoses=bestDoses.map(d=>({...d,units:Math.round(d.units*2)/2})).filter(d=>d.units>0);
-  const optimizedCurve=applyDosesToBase(gBase,bestDoses);
+  const gBase=buildGlucoseCurve().values;
+  const optimizedCurve=applyDosesToBase(gBase,doses);
   const newPeak=Math.max(...optimizedCurve);
-  const totalU=r2(bestDoses.reduce((s,d)=>s+d.units,0));
 
   const res=document.getElementById('opt-result');
   res.style.display='block';
   res.innerHTML=`
     <div style="background:rgba(139,92,246,.06);border-radius:10px;padding:12px;margin-bottom:10px">
-      <div style="font-weight:800;font-size:13px;color:#6D28D9;margin-bottom:8px">Plan óptimo calculado — ${totalU}U total</div>
-      ${bestDoses.map((d,i)=>
-        `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <span style="background:rgba(139,92,246,.15);color:#6D28D9;font-weight:800;border-radius:6px;padding:3px 9px;font-size:12px">💉 ${d.units}U</span>
-          <span style="font-size:12px;color:var(--muted);font-weight:600">${d.time===0?'Al inicio de la comida':d.time<0?Math.abs(d.time)+' min antes de comer':d.time+' min tras empezar'}</span>
-        </div>`
-      ).join('')}
+      <div style="font-weight:800;font-size:13px;color:#6D28D9;margin-bottom:8px">Plan Varsovia ajustado — ${r2(total)}U total</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">HC: <strong>${r2(carbUnits)}U</strong> · Grasas+proteínas: <strong>${r2(fpUnits)}U</strong> (${r2(w.ugp)} UGP, duración ~${Math.round((extMin||0)/60)}h) · Corrección: <strong>${r2(correctionUnits)}U</strong></div>
+      ${doses.map((d,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="background:rgba(139,92,246,.15);color:#6D28D9;font-weight:800;border-radius:6px;padding:3px 9px;font-size:12px">💉 ${d.units}U</span><span style="font-size:12px;color:var(--muted);font-weight:600">${d.time===0?'Al inicio':d.time<0?Math.abs(d.time)+' min antes':d.time+' min tras empezar'}</span></div>`).join('')}
       <div style="font-size:12px;color:var(--muted);margin-top:4px">Pico estimado con este plan: <strong style="color:#6D28D9">${newPeak} mg/dL</strong></div>
     </div>
-    <button class="btn btn-purple" style="width:100%;justify-content:center;font-size:13px" onclick="applyOptimizedDoses(${JSON.stringify(bestDoses).replace(/"/g,"'")})">
+    <button class="btn btn-purple" style="width:100%;justify-content:center;font-size:13px" onclick="applyOptimizedDoses(${JSON.stringify(doses).replace(/"/g,"'")})">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:15px;height:15px"><path d="M20 6L9 17l-5-5"/></svg>
       Aplicar este plan
     </button>`;
 }
 
 function applyOptimizedDoses(doses){
-  // doses comes as stringified, parse it back
   if(typeof doses==='string') doses=JSON.parse(doses.replace(/'/g,'"'));
-  insulinDoses=[...doses.map(d=>({id:Date.now()+Math.random(),time:d.time,units:d.units}))];
+  insulinDoses=[...doses.map(d=>({id:Date.now()+Math.random(),time:clampDoseTime(d.time),units:normalizeDoseUnits(d.units)}))];
   persist();renderDoseList();renderGraph();
   toast('✨ Plan de insulina aplicado');
-  // Hide the result box
   const res=document.getElementById('opt-result');if(res)res.style.display='none';
 }
 
@@ -791,6 +944,7 @@ function showTab(id){
   if(id==='meal')renderMeal();
   if(id==='graph')renderGraph();
   if(id==='favorites')renderFavorites();
+  if(id==='history')renderHistory();
   if(id==='settings')renderSettings();
 }
 
@@ -1018,22 +1172,46 @@ function buildMacroGrid(t,title){
 }
 
 // ═══ INSULIN DOSES ════════════════════════════════════════
+function clampDoseTime(v){return Math.max(-30,Math.min(240,Math.round((parseFloat(v)||0)/5)*5));}
+function normalizeDoseUnits(v){
+  const n=parseFloat(v)||0;
+  if(n<=0)return 0;
+  return roundDose(Math.max(config.doseMin||0.1,n));
+}
 function addDose(){
-  const time=parseFloat(document.getElementById('dose-time').value)||0;
-  const units=parseFloat(document.getElementById('dose-units').value)||0;
+  const time=clampDoseTime(document.getElementById('dose-time').value);
+  const units=normalizeDoseUnits(document.getElementById('dose-units').value);
   if(units<=0){toast('Unidades deben ser > 0','err');return;}
   insulinDoses.push({id:Date.now(),time,units});
+  document.getElementById('dose-time').value=time;
+  document.getElementById('dose-units').value=units;
   persist();renderDoseList();renderGraph();
   toast('💉 '+units+'U de insulina añadida');
 }
 function removeDose(id){
   insulinDoses=insulinDoses.filter(d=>d.id!==id);persist();renderDoseList();renderGraph();
 }
+function updateDoseTime(id,val){
+  const d=insulinDoses.find(x=>x.id===id); if(!d)return;
+  d.time=clampDoseTime(val); persist(); renderDoseList(); renderGraph();
+}
+function updateDoseUnits(id,val){
+  const d=insulinDoses.find(x=>x.id===id); if(!d)return;
+  d.units=normalizeDoseUnits(val); persist(); renderDoseList(); renderGraph();
+}
 function renderDoseList(){
   const list=document.getElementById('dose-list'),empty=document.getElementById('dose-empty');
   if(!insulinDoses.length){list.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  list.innerHTML=insulinDoses.map(d=>`<div class="dose-row"><span class="dose-pill">💉 ${d.units}U</span><span class="dose-time">${d.time>=0?'+':''}${d.time} min desde el inicio</span><button class="dose-del" onclick="removeDose(${d.id})">🗑️</button></div>`).join('');
+  list.innerHTML=insulinDoses.map(d=>`<div class="dose-row" style="display:block">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="dose-pill">💉 <input type="number" value="${d.units}" min="${config.doseMin}" step="${config.doseRoundStep}" oninput="updateDoseUnits(${d.id},this.value)" style="width:54px;border:none;background:transparent;color:inherit;font:inherit;font-weight:800;text-align:center">U</span>
+      <span class="dose-time"><div>${formatDoseTimeLabel(d.time)}</div><div class="dose-real">🕒 ${formatClockFromOffset(d.time)}</div></span>
+      <button class="dose-del" onclick="removeDose(${d.id})">🗑️</button>
+    </div>
+    <input type="range" min="-30" max="240" step="5" value="${d.time}" oninput="updateDoseTime(${d.id},this.value)" style="margin-top:8px">
+    <div class="range-labels"><span>-30 min</span><span>mover línea en tiempo real</span><span>+240 min</span></div>
+  </div>`).join('');
 }
 
 // ═══ CONDITIONS ═══════════════════════════════════════════
@@ -1062,25 +1240,63 @@ function syncCondUI(){
 
 // ═══ GRAPH ════════════════════════════════════════════════
 let gTimer=null;
+let dragDoseId=null;
+const doseDragPlugin={
+  id:'doseDragPlugin',
+  afterEvent(chart,args){
+    const e=args.event;
+    if(!chart || !chart.scales || !insulinDoses.length)return;
+    const xScale=chart.scales.x;
+    if(!xScale)return;
+    const points=insulinDoses.map(d=>({id:d.id,x:xScale.getPixelForValue(Math.round((d.time+30)/5))}));
+    if(e.type==='mousedown' || e.type==='touchstart'){
+      const hit=points.find(p=>Math.abs(p.x-e.x)<16);
+      if(hit){dragDoseId=hit.id; args.changed=true;}
+    }else if((e.type==='mousemove' || e.type==='touchmove') && dragDoseId!=null){
+      const idx=Math.round(xScale.getValueForPixel(e.x));
+      const newTime=clampDoseTime((idx*5)-30);
+      const dose=insulinDoses.find(d=>d.id===dragDoseId);
+      if(dose && dose.time!==newTime){dose.time=newTime;persist();renderDoseList();scheduleGraph();}
+      args.changed=true;
+    }else if(['mouseup','mouseout','touchend','touchcancel'].includes(e.type)){
+      dragDoseId=null;
+    }
+  }
+};
 function scheduleGraph(){clearTimeout(gTimer);gTimer=setTimeout(renderGraph,150);}
+function toggleCurve(key,val){curveVisibility[key]=!!val;persist();renderGraph();}
+function renderCurveToggles(){
+  const map=[['basal','Basal'],['simple','Azúcares'],['complex','HC complejos'],['protein','Proteínas'],['fat','Grasas'],['total','Sin insulina'],['withIns','Con insulina'],['insEffect','Efecto insulina']];
+  const el=document.getElementById('curve-toggles'); if(!el)return;
+  el.innerHTML=map.map(([k,label])=>`<label class="curve-toggle"><input type="checkbox" ${curveVisibility[k]?'checked':''} onchange="toggleCurve('${k}',this.checked)"> ${label}</label>`).join('');
+}
 
 function renderGraph(){
   const em=document.getElementById('graph-empty'),co=document.getElementById('graph-content');
+  const glucoseInput=document.getElementById('current-glucose');
+  if(glucoseInput && !glucoseInput.value)glucoseInput.placeholder='Ej: '+config.baseGlucose;
   if(!meal.length){em.style.display='block';co.style.display='none';return;}
   em.style.display='none';co.style.display='block';
-  syncCondUI();renderDoseList();
+  syncCondUI();renderDoseList();renderCurveToggles();syncDoseInputs();
 
-  const{labels,values:gBase}=buildGlucoseCurve();
-  const gWithIns=buildGlucoseWithInsulin(gBase);
-  const insAct=buildInsulinActivity();
+  const model=buildMetabolicModel();
+  const labels=model.labels;
+  const gBase=model.glucoseNoIns;
+  const withIns=buildGlucoseWithInsulin(model);
+  const gWithIns=withIns?withIns.glucose:null;
+  const insEffect=withIns?withIns.effect:new Array(labels.length).fill(0);
+  const insAct=buildInsulinActivity(model);
   const insMax=Math.max(...insAct,1);
-  const allVals=[...gBase,...(gWithIns||[])];
+  const allVals=[...gBase,...model.basal,...(gWithIns||[])];
   const peak=Math.max(...gBase);
   const peakWith=gWithIns?Math.max(...gWithIns):peak;
+  const lowWith=gWithIns?Math.min(...gWithIns):Math.min(...gBase);
+  const minIdx=gWithIns?gWithIns.indexOf(lowWith):-1;
   const dispPeak=gWithIns?peakWith:peak;
-  const status=dispPeak>180?'high':dispPeak>config.targetMax?'warn':'safe';
+  const hypoRisk=gWithIns && lowWith<config.hypoThreshold;
+  const status=hypoRisk?'hypo':dispPeak>180?'high':dispPeak>config.targetMax?'warn':'safe';
   const sc=status==='safe'?'#10B981':status==='warn'?'#F59E0B':'#EF4444';
-  const st=status==='safe'?'✅ Niveles en rango':status==='warn'?'⚠️ Glucosa elevada':'🚨 Glucosa muy alta';
+  const st=status==='safe'?'✅ Niveles en rango':status==='warn'?'⚠️ Glucosa elevada':status==='hypo'?'🩸 Posible bajada':'🚨 Glucosa muy alta';
   const mult=condMult();
   let condNote='';
   if(conditions.sick&&conditions.mens)condNote=` ⚠️ Resistencia ×${r1(mult)} (enfermedad+menstruación)`;
@@ -1091,33 +1307,60 @@ function renderGraph(){
   sb.style.cssText=`background:${sc}18;border:1px solid ${sc}40`;
   sb.innerHTML=`<div><div class="status-title" style="color:${sc}">${st}</div>
     <div class="status-sub">Pico${gWithIns?' con insulina':''}: <strong style="color:${sc}">${dispPeak} mg/dL</strong>${condNote}</div>
+    ${gWithIns?`<div class="status-sub" style="margin-top:2px">Mínimo con insulina: <strong>${lowWith} mg/dL</strong>${minIdx>=0?` · ~${formatClockFromOffset(model.times[minIdx])}`:''}</div>`:''}
     ${gWithIns?`<div class="status-sub" style="margin-top:2px">Sin insulina: <strong>${peak} mg/dL</strong></div>`:''}
   </div>
   <div class="status-right"><div>Rango objetivo</div><strong>${config.targetMin}–${config.targetMax} mg/dL</strong></div>`;
 
+  const riskEl=document.getElementById('risk-banner');
+  if(hypoRisk){
+    riskEl.style.display='block';
+    riskEl.innerHTML=`<div class="warning-card" style="background:#FEF2F2;border-color:rgba(239,68,68,.24)"><div style="font-size:18px">⚠️</div><div class="warning-text" style="color:#991B1B"><strong>Posible hipoglucemia con esta dosis.</strong><br>La curva cae hasta <strong>${lowWith} mg/dL</strong> hacia las <strong>${minIdx>=0?formatClockFromOffset(model.times[minIdx]):'—'}</strong>. Prueba a reducir unidades o retrasar la dosis.</div></div>`;
+  }else riskEl.style.display='none';
+
   // Chart
   if(glucoseChart){glucoseChart.destroy();glucoseChart=null;}
-  const minY=Math.max(40,Math.min(55,...allVals)-10);
+  const minAll=Math.min(...allVals,...(gWithIns||[]));
+  const minY=Math.max(35,Math.min(55,minAll)-12);
   const maxY=Math.max(config.targetMax+20,Math.max(...allVals)+15);
   const ctx=document.getElementById('glucose-chart').getContext('2d');
 
   const datasets=[{
-    label:'Glucosa sin insulina',data:gBase,
-    borderColor:'#1A7F6E',borderWidth:gWithIns?1.5:2.5,
+    label:'Basal',data:model.basal,hidden:!curveVisibility.basal,
+    borderColor:'#64748B',borderWidth:1.4,fill:false,tension:0.25,pointRadius:0,borderDash:[2,3]
+  },{
+    label:'Azúcares',data:model.simple.map((v,i)=>r1(model.basal[i]+v)),hidden:!curveVisibility.simple,
+    borderColor:'#F97316',borderWidth:1.2,fill:false,tension:0.35,pointRadius:0
+  },{
+    label:'HC complejos',data:model.complex.map((v,i)=>r1(model.basal[i]+v)),hidden:!curveVisibility.complex,
+    borderColor:'#3B82F6',borderWidth:1.2,fill:false,tension:0.35,pointRadius:0
+  },{
+    label:'Proteínas',data:model.protein.map((v,i)=>r1(model.basal[i]+v)),hidden:!curveVisibility.protein,
+    borderColor:'#A855F7',borderWidth:1.2,fill:false,tension:0.35,pointRadius:0
+  },{
+    label:'Grasas',data:model.fat.map((v,i)=>r1(model.basal[i]+v)),hidden:!curveVisibility.fat,
+    borderColor:'#64748B',borderWidth:1.2,fill:false,tension:0.35,pointRadius:0
+  },{
+    label:'Glucosa sin insulina',data:gBase,hidden:!curveVisibility.total,
+    borderColor:'#1A7F6E',borderWidth:gWithIns?1.7:2.6,
     fill:!gWithIns,tension:0.4,pointRadius:0,pointHoverRadius:5,
     borderDash:gWithIns?[5,4]:[],
-    backgroundColor:(c)=>{const g=c.chart.ctx.createLinearGradient(0,0,0,260);g.addColorStop(0,'rgba(26,127,110,0.25)');g.addColorStop(1,'rgba(26,127,110,0)');return g;},
+    backgroundColor:(c)=>{const g=c.chart.ctx.createLinearGradient(0,0,0,260);g.addColorStop(0,'rgba(26,127,110,0.18)');g.addColorStop(1,'rgba(26,127,110,0)');return g;},
   }];
   if(gWithIns)datasets.push({
-    label:'Con insulina',data:gWithIns,borderColor:'#3B82F6',borderWidth:2.5,
+    label:'Con insulina',data:gWithIns,hidden:!curveVisibility.withIns,borderColor:'#3B82F6',borderWidth:2.5,
     fill:true,tension:0.4,pointRadius:0,pointHoverRadius:5,
     backgroundColor:(c)=>{const g=c.chart.ctx.createLinearGradient(0,0,0,260);g.addColorStop(0,'rgba(59,130,246,0.18)');g.addColorStop(1,'rgba(59,130,246,0)');return g;},
   });
   if(insulinDoses.length)datasets.push({
-    label:'Actividad insulina',
-    data:insAct.map(v=>minY+(v/insMax)*(maxY-minY)*0.32),
-    borderColor:'#8B5CF6',borderWidth:1.5,fill:false,tension:0.5,
+    label:'Actividad insulina',hidden:!curveVisibility.insEffect,
+    data:insAct.map(v=>minY+(v/insMax)*(maxY-minY)*0.18),
+    borderColor:'#8B5CF6',borderWidth:1.3,fill:false,tension:0.5,
     pointRadius:0,borderDash:[3,3],
+  },{
+    label:'Efecto insulina',hidden:!curveVisibility.insEffect,
+    data:model.basal.map((b,i)=>r1(b+Math.max(0,model.totalNutrients[i]-insEffect[i]))),
+    borderColor:'#7C3AED',borderWidth:1.6,fill:false,tension:0.35,pointRadius:0,borderDash:[6,3]
   });
 
   glucoseChart=new Chart(ctx,{
@@ -1129,14 +1372,14 @@ function renderGraph(){
         legend:{display:false},
         tooltip:{
           filter:item=>item.dataset.label!=='Actividad insulina',
-          callbacks:{label:c=>{if(c.dataset.label==='Actividad insulina')return null;return c.dataset.label+': '+c.parsed.y+' mg/dL';}},
+          callbacks:{title:items=>items.length?formatClockFromOffset(model.times[items[0].dataIndex]):'',label:c=>{if(c.dataset.label==='Actividad insulina')return null;return c.dataset.label+': '+c.parsed.y+' mg/dL';}},
           backgroundColor:'white',titleColor:'#0E2B24',bodyColor:'#0E2B24',
           borderColor:'#EAF2EF',borderWidth:1,padding:10,cornerRadius:10,
           titleFont:{family:'Nunito',size:12},bodyFont:{family:'Nunito',size:13,weight:'700'}
         }
       },
       scales:{
-        x:{ticks:{maxTicksLimit:10,font:{family:'Nunito',size:10},color:'#7A9E97'},grid:{color:'#EAF2EF'}},
+        x:{ticks:{maxTicksLimit:10,font:{family:'Nunito',size:10},color:'#7A9E97',callback:(value,index)=>formatClockFromOffset(model.times[index])},grid:{color:'#EAF2EF'}},
         y:{min:minY,max:maxY,ticks:{font:{family:'Nunito',size:10},color:'#7A9E97'},grid:{color:'#EAF2EF'}}
       }
     },
@@ -1159,24 +1402,32 @@ function renderGraph(){
           c.save();c.strokeStyle='#8B5CF6';c.lineWidth=1.5;c.setLineDash([4,3]);
           c.beginPath();c.moveTo(xp,y.top);c.lineTo(xp,y.bottom);c.stroke();
           c.setLineDash([]);c.fillStyle='#8B5CF6';c.font='bold 9px Nunito,sans-serif';
-          c.fillText('💉'+dose.units+'U',xp+3,y.top+12);c.restore();
+          c.fillText('💉'+dose.units+'U',xp+3,y.top+12);
+          c.fillText(formatClockFromOffset(dose.time),xp+3,y.top+24);c.restore();
         });
       }
-    }]
+    }, doseDragPlugin]
   });
 
   // Legend
   document.getElementById('chart-legend').innerHTML=
-    `<div class="legend-item"><div class="legend-line" style="background:#1A7F6E${gWithIns?';opacity:.5':''}"></div>Sin insulina</div>`+
+    `<div class="legend-item"><div class="legend-line" style="background:#64748B"></div>Basal</div>`+
+    `<div class="legend-item"><div class="legend-line" style="background:#F97316"></div>Azúcares</div>`+
+    `<div class="legend-item"><div class="legend-line" style="background:#3B82F6"></div>HC complejos</div>`+
+    `<div class="legend-item"><div class="legend-line" style="background:#A855F7"></div>Proteínas</div>`+
+    `<div class="legend-item"><div class="legend-line" style="background:#64748B"></div>Grasas</div>`+
+    `<div class="legend-item"><div class="legend-line" style="background:#1A7F6E"></div>Sin insulina</div>`+
     (gWithIns?`<div class="legend-item"><div class="legend-line" style="background:#3B82F6"></div>Con insulina</div>`:'')+
-    (insulinDoses.length?`<div class="legend-item"><div class="legend-line" style="background:#8B5CF6"></div>Actividad insulina</div>`:'')+
+    (insulinDoses.length?`<div class="legend-item"><div class="legend-line" style="background:#7C3AED"></div>Efecto insulina</div>`:'')+
     `<div class="legend-item"><div class="legend-line" style="background:var(--safe)"></div>Mín</div>`+
     `<div class="legend-item"><div class="legend-line" style="background:var(--warn)"></div>Obj máx</div>`+
     `<div class="legend-item"><div class="legend-line" style="background:var(--danger)"></div>Alto 180</div>`;
 
   // Insulin recommendation
-  const recUnits=recommendInsulin(gBase);
+  const recUnits=recommendInsulin(model);
+  const warsaw=getWarsawMealData();
   const effISF=r1(config.insulinSensitivity/mult);
+  const correctionUnits=r2(Math.max(0,startGlucose()-((config.targetMin+config.targetMax)/2))/Math.max(1,warsaw.effISF));
   const recEl=document.getElementById('insulin-rec-content');
   if(recUnits<=0){
     recEl.innerHTML=`<div style="color:var(--safe);font-weight:700;font-size:14px">✅ No se necesita corrección — el pico se mantiene dentro del rango objetivo</div>`;
@@ -1185,9 +1436,10 @@ function renderGraph(){
       <div><div class="insulin-units">${recUnits}<span>U</span></div></div>
       <div class="insulin-info">
         <div style="font-weight:800;font-size:14px">Dosis estimada para este plato</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px">ISF efectivo: <strong>${effISF} mg/dL/U</strong>${mult>1?' (resistencia ×'+r1(mult)+')':''}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px">Pico estimado: <strong>${peak} mg/dL</strong> — exceso: <strong>${peak-config.targetMax} mg/dL</strong></div>
-        <div style="font-size:11px;color:var(--danger);margin-top:6px;font-weight:700">⚠️ Consulta siempre a tu médico antes de administrar insulina</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">ISF efectivo: <strong>${effISF} mg/dL/U</strong> · ICR: <strong>1U/${config.carbRatio}g HC</strong>${mult>1?' (resistencia ×'+r1(mult)+')':''}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">HC comida: <strong>${r2(warsaw.carbUnits)}U</strong> · Grasas+proteínas (Varsovia): <strong>${r2(warsaw.fpUnits)}U</strong> (${r2(warsaw.ugp)} UGP, ~${Math.round((warsaw.extendedMinutes||0)/60)}h)</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Corrección inicial: <strong>${correctionUnits}U</strong> · Pico estimado sin insulina: <strong>${peak} mg/dL</strong></div>
+        <div style="font-size:11px;color:var(--danger);margin-top:6px;font-weight:700">⚠️ Simulación educativa. Comprueba siempre con tu pauta médica.</div>
       </div>
     </div>`;
   }
@@ -1220,11 +1472,11 @@ function renderGraph(){
 
   // Absorption list
   document.getElementById('absorb-list').innerHTML=[
-    {label:'⚡ Az. rápidos',time:config.simpleSugarTime,color:'#F97316',amount:r1(t.sugars)+'g'},
-    {label:'🌾 HC complejos',time:config.complexCarbTime,color:'#3B82F6',amount:r1(t.complexCarbs)+'g'},
-    {label:'💪 Proteínas',time:config.proteinTime,color:'#A855F7',amount:r1(t.proteins)+'g'},
-    {label:'🧈 Grasas',time:config.fatTime,color:'#64748B',amount:r1(t.fats)+'g'},
-    {label:'💉 Insulina (pico)',time:config.insulinPeakTime,color:'#8B5CF6',amount:insulinDoses.reduce((s,d)=>s+d.units,0)+'U total'},
+    {label:'⚡ Az. rápidos',time:config.simpleDuration,color:'#F97316',amount:r1(t.sugars)+'g · fin ~'+config.simpleDuration+' min'},
+    {label:'🌾 HC complejos',time:config.complexDuration,color:'#3B82F6',amount:r1(t.complexCarbs)+'g · fin ~'+config.complexDuration+' min'},
+    {label:'💪 Proteínas',time:config.proteinDuration,color:'#A855F7',amount:r1(t.proteins)+'g · Varsovia '+r2(warsaw.ugp)+' UGP'},
+    {label:'🧈 Grasas',time:config.fatDuration,color:'#64748B',amount:r1(t.fats)+'g · bolo ext. ~'+Math.round((warsaw.extendedMinutes||0)/60)+'h'},
+    {label:'💉 Insulina (duración)',time:config.insulinDuration,color:'#8B5CF6',amount:insulinDoses.reduce((s,d)=>s+d.units,0)+'U total'},
   ].map(({label,time,color,amount})=>`<div class="absorb-row"><span class="absorb-label">${label}</span><div class="absorb-right"><span class="absorb-g">${amount}</span><span class="absorb-min" style="color:${color};background:${color}18">~${time} min</span></div></div>`).join('');
 }
 
@@ -1251,19 +1503,138 @@ function renderFavorites(){
   if(favFoods.length)fw.innerHTML='<div class="fav-section-title">❤️ Alimentos favoritos</div>'+favFoods.map(f=>buildFoodCard(f)).join('');
 }
 
+// ═══ HISTORY ══════════════════════════════════════════════
+function nowIso(){return new Date().toISOString();}
+function formatDateTime(iso){try{return new Date(iso).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}catch{return iso||'';}}
+function getCurrentSimulationSnapshot(){
+  const model=buildMetabolicModel();
+  const withIns=buildGlucoseWithInsulin(model);
+  const curve=withIns?withIns.glucose:model.basal.map((v,i)=>r1(v+model.totalNutrients[i]));
+  const predictedPeak=r1(Math.max(...curve));
+  const predictedMin=r1(Math.min(...curve));
+  const minIndex=curve.indexOf(predictedMin);
+  const peakIndex=curve.indexOf(predictedPeak);
+  const t=totals();
+  return {
+    id:Date.now()+Math.floor(Math.random()*1000),
+    savedAt:nowIso(),
+    mealName: meal.length===1 ? meal[0].food.name : (meal.length? 'Plato de '+meal.length+' alimentos' : 'Sin plato'),
+    items: meal.map(({food,weight})=>({id:food.id,name:food.name,weight,food})),
+    totals:{kcal:rnd(t.kcal),carbs:r1(t.carbs),sugars:r1(t.sugars),complexCarbs:r1(t.complexCarbs),proteins:r1(t.proteins),fats:r1(t.fats)},
+    startGlucose:startGlucose(),
+    target:{min:config.targetMin,max:config.targetMax},
+    configRef:{deviceType:config.deviceType,carbRatio:config.carbRatio,isf:config.insulinSensitivity,insulinDuration:config.insulinDuration},
+    doses:insulinDoses.map(d=>({id:d.id,time:d.time,clock:formatClockFromOffset(d.time),units:d.units})),
+    predicted:{peak:predictedPeak,peakAt:formatClockFromOffset(model.times[peakIndex]),min:predictedMin,minAt:formatClockFromOffset(model.times[minIndex]),hypo:predictedMin<config.hypoThreshold},
+    review:{status:'pending',actualPeak:'',actualMin:'',notes:''}
+  };
+}
+function saveCurrentHistory(){
+  if(!meal.length && !insulinDoses.length){toast('Añade comida o dosis antes de guardar','err');return;}
+  const snap=getCurrentSimulationSnapshot();
+  historyEntries.unshift(snap);
+  historyEntries=historyEntries.slice(0,60);
+  persist();
+  renderHistory();
+  toast('Simulación guardada en historial');
+}
+function renderHistory(){
+  const list=document.getElementById('history-list'), empty=document.getElementById('history-empty'), summary=document.getElementById('history-summary');
+  if(!list||!empty||!summary)return;
+  if(!historyEntries.length){list.innerHTML='';summary.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  const hypos=historyEntries.filter(h=>h.predicted&&h.predicted.hypo).length;
+  const reviewed=historyEntries.filter(h=>h.review&&h.review.status!=='pending').length;
+  summary.innerHTML=`<div class="macro-grid" style="margin-bottom:12px">
+    <div class="macro-cell"><div class="label">Registros</div><div class="val">${historyEntries.length}</div></div>
+    <div class="macro-cell"><div class="label">Con aviso hipo</div><div class="val">${hypos}</div></div>
+    <div class="macro-cell"><div class="label">Revisados</div><div class="val">${reviewed}</div></div>
+  </div>`;
+  list.innerHTML=historyEntries.map(h=>{
+    const doseTotal=r2((h.doses||[]).reduce((s,d)=>s+(+d.units||0),0));
+    const dp=h.review?.actualPeak!==''?r1((+h.review.actualPeak)-(+h.predicted.peak)):'—';
+    const dm=h.review?.actualMin!==''?r1((+h.review.actualMin)-(+h.predicted.min)):'—';
+    const statusMap={pending:'Pendiente',ok:'Correcta',short:'Se quedó corta',long:'Se pasó',hypo:'Hubo bajada'};
+    return `<div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <div>
+          <div class="card-title" style="margin-bottom:4px">🍽️ ${esc(h.mealName||'Simulación')}</div>
+          <div style="font-size:12px;color:var(--muted)">${formatDateTime(h.savedAt)} · glucosa inicial <strong>${h.startGlucose} mg/dL</strong></div>
+        </div>
+        <button class="dose-del" onclick="deleteHistoryEntry(${h.id})">🗑️</button>
+      </div>
+      <div style="font-size:13px;margin:10px 0 8px;color:var(--muted)">${(h.items||[]).slice(0,3).map(i=>esc(i.name)+' ('+i.weight+'g)').join(' · ')}${(h.items||[]).length>3?' · …':''}</div>
+      <div class="macro-grid" style="margin-bottom:10px">
+        <div class="macro-cell"><div class="label">Macros</div><div class="val">${h.totals.carbs}C</div><div class="sub">${h.totals.proteins}P · ${h.totals.fats}G</div></div>
+        <div class="macro-cell"><div class="label">Insulina</div><div class="val">${doseTotal}U</div><div class="sub">${(h.doses||[]).length} dosis</div></div>
+        <div class="macro-cell"><div class="label">Estimado</div><div class="val">${h.predicted.peak}/${h.predicted.min}</div><div class="sub">máx/mín</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        ${(h.doses||[]).map(d=>`<span class="dose-pill">💉 ${d.units}U · ${d.clock}</span>`).join('')}
+        ${h.predicted.hypo?`<span class="dose-pill" style="background:#fef2f2;color:#b91c1c">⚠️ posible bajada ${h.predicted.min} a las ${h.predicted.minAt}</span>`:''}
+      </div>
+      <div class="two-col" style="margin-bottom:8px">
+        <div class="input-group"><label>Pico real observado (mg/dL)</label><input class="input" type="number" value="${h.review?.actualPeak??''}" oninput="updateHistoryReview(${h.id},'actualPeak',this.value)"></div>
+        <div class="input-group"><label>Mínimo real observado (mg/dL)</label><input class="input" type="number" value="${h.review?.actualMin??''}" oninput="updateHistoryReview(${h.id},'actualMin',this.value)"></div>
+      </div>
+      <div class="two-col" style="margin-bottom:8px">
+        <div class="input-group"><label>Resultado</label><select class="input" onchange="updateHistoryReview(${h.id},'status',this.value)">
+          <option value="pending" ${h.review?.status==='pending'?'selected':''}>Pendiente</option>
+          <option value="ok" ${h.review?.status==='ok'?'selected':''}>Correcta</option>
+          <option value="short" ${h.review?.status==='short'?'selected':''}>Se quedó corta</option>
+          <option value="long" ${h.review?.status==='long'?'selected':''}>Se pasó</option>
+          <option value="hypo" ${h.review?.status==='hypo'?'selected':''}>Hubo bajada</option>
+        </select></div>
+        <div class="input-group"><label>Desviación real vs estimada</label><div class="input" style="display:flex;align-items:center;background:#f8fbfa">Pico: <strong style="margin:0 6px">${dp}</strong> · Mín: <strong style="margin-left:6px">${dm}</strong></div></div>
+      </div>
+      <div class="input-group" style="margin-bottom:10px"><label>Notas</label><textarea class="input" style="min-height:78px;resize:vertical" oninput="updateHistoryReview(${h.id},'notes',this.value)">${esc(h.review?.notes||'')}</textarea></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="loadHistoryEntry(${h.id})">↺ Cargar simulación</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px">${statusMap[h.review?.status||'pending']} · pico est. ${h.predicted.peak} a las ${h.predicted.peakAt} · mínimo est. ${h.predicted.min} a las ${h.predicted.minAt}</div>
+    </div>`;
+  }).join('');
+}
+function updateHistoryReview(id,key,val){
+  const h=historyEntries.find(x=>x.id===id); if(!h) return;
+  h.review=h.review||{status:'pending',actualPeak:'',actualMin:'',notes:''};
+  h.review[key]=val; persist();
+  if(key!=='notes') renderHistory();
+}
+function deleteHistoryEntry(id){ historyEntries=historyEntries.filter(h=>h.id!==id); persist(); renderHistory(); toast('Registro eliminado'); }
+function loadHistoryEntry(id){
+  const h=historyEntries.find(x=>x.id===id); if(!h) return;
+  meal=(h.items||[]).map(it=>({food:registerFood(it.food||it),weight:it.weight}));
+  insulinDoses=(h.doses||[]).map((d,idx)=>({id:Date.now()+idx+Math.random(),time:d.time,units:d.units}));
+  const gi=document.getElementById('current-glucose'); if(gi) gi.value=h.startGlucose||'';
+  persist(); updateMealChip(); renderMeal(); renderDoseList(); renderGraph(); showTab('graph'); toast('Simulación cargada');
+}
+
 // ═══ SETTINGS ═════════════════════════════════════════════
 const SDEFS=[
   {section:'⏱️ Absorción de macronutrientes'},
   {key:'baseGlucose',label:'Glucosa basal',desc:'Nivel en ayunas (usado si no introduces glucosa actual)',min:60,max:180,step:1,unit:'mg/dL',emoji:'🩸',color:'#1A7F6E'},
-  {key:'sensitivity',label:'Sensibilidad glucémica',desc:'Impacto en mg/dL por gramo de azúcar simple',min:0.5,max:10,step:0.5,unit:'mg/dL·g',emoji:'📊',color:'#F59E0B'},
-  {key:'simpleSugarTime',label:'Pico azúcares simples',desc:'Minutos hasta el pico de absorción rápida',min:10,max:60,step:5,unit:' min',emoji:'⚡',color:'#F97316'},
-  {key:'complexCarbTime',label:'Pico HC complejos',desc:'Minutos hasta el pico de hidratos lentos',min:30,max:180,step:5,unit:' min',emoji:'🌾',color:'#3B82F6'},
-  {key:'proteinTime',label:'Pico proteínas',desc:'Minutos hasta el efecto máximo de proteínas',min:60,max:360,step:10,unit:' min',emoji:'💪',color:'#A855F7'},
-  {key:'fatTime',label:'Pico grasas',desc:'Minutos hasta el efecto máximo de grasas',min:120,max:480,step:10,unit:' min',emoji:'🧈',color:'#64748B'},
+  {key:'carbRatio',label:'Ratio insulina / hidratos (ICR)',desc:'Gramos de hidratos cubiertos por 1U de insulina rápida',min:4,max:30,step:1,unit:' g/U',emoji:'🍞',color:'#1A7F6E'},
+  {key:'simpleSugarTime',label:'Pico azúcares simples',desc:'Minutos hasta el pico del efecto glucémico rápido',min:10,max:70,step:5,unit:' min',emoji:'⚡',color:'#F97316'},
+  {key:'simpleDuration',label:'Duración azúcares simples',desc:'Tiempo total de acción de azúcares simples',min:45,max:180,step:15,unit:' min',emoji:'⚡',color:'#FB923C'},
+  {key:'complexCarbTime',label:'Pico HC complejos',desc:'Minutos hasta el pico de hidratos complejos',min:45,max:180,step:5,unit:' min',emoji:'🌾',color:'#3B82F6'},
+  {key:'complexDuration',label:'Duración HC complejos',desc:'Tiempo total de acción de hidratos complejos',min:120,max:420,step:15,unit:' min',emoji:'🌾',color:'#60A5FA'},
+  {key:'proteinTime',label:'Pico proteínas',desc:'Minutos hasta el efecto máximo tardío de proteínas',min:120,max:360,step:10,unit:' min',emoji:'💪',color:'#A855F7'},
+  {key:'proteinDuration',label:'Duración proteínas',desc:'Cola tardía típica de proteínas',min:240,max:540,step:15,unit:' min',emoji:'💪',color:'#C084FC'},
+  {key:'fatTime',label:'Pico grasas',desc:'Minutos hasta el efecto máximo tardío de grasas',min:180,max:480,step:10,unit:' min',emoji:'🧈',color:'#64748B'},
+  {key:'fatDuration',label:'Duración grasas',desc:'Tiempo total de acción de grasas',min:300,max:720,step:15,unit:' min',emoji:'🧈',color:'#94A3B8'},
+  {key:'proteinImpactFactor',label:'Factor proteína (Varsovia)',desc:'Qué fracción del equivalente proteína se usa en el modelo',min:0.5,max:1.5,step:0.05,unit:'×',emoji:'🥩',color:'#A855F7'},
+  {key:'fatImpactFactor',label:'Factor grasa (Varsovia)',desc:'Qué fracción del equivalente grasa se usa en el modelo',min:0.5,max:1.5,step:0.05,unit:'×',emoji:'🍕',color:'#64748B'},
+  {key:'fatCarbDelayPer10g',label:'Retraso por grasa',desc:'Minutos extra que 10g de grasa añaden a la absorción de hidratos',min:0,max:25,step:1,unit:' min/10g',emoji:'🐢',color:'#64748B'},
+  {key:'basalDecayPerHour',label:'Descenso basal por gasto energético',desc:'Bajada lenta de glucosa por hora sin contar comida ni insulina',min:0,max:6,step:0.2,unit:' mg/dL/h',emoji:'🔥',color:'#64748B'},
   {section:'💉 Parámetros de insulina'},
   {key:'insulinSensitivity',label:'Factor sensibilidad insulínica (ISF)',desc:'mg/dL que baja la glucosa por cada unidad de insulina rápida',min:10,max:150,step:5,unit:'mg/dL/U',emoji:'💉',color:'#8B5CF6'},
-  {key:'insulinPeakTime',label:'Pico de acción de insulina',desc:'Minutos hasta el pico de efecto (insulina rápida: 60–90 min)',min:30,max:120,step:5,unit:' min',emoji:'⏱️',color:'#7C3AED'},
-  {key:'insulinDuration',label:'Duración de acción',desc:'Duración total de la insulina rápida (típico: 3–4h)',min:120,max:360,step:15,unit:' min',emoji:'⏰',color:'#6D28D9'},
+  {key:'insulinOnset',label:'Inicio de acción',desc:'Minutos hasta que la insulina empieza a notarse',min:0,max:45,step:5,unit:' min',emoji:'🚀',color:'#6D28D9'},
+  {key:'insulinPeakTime',label:'Pico de acción de insulina',desc:'Minutos hasta el pico de efecto (rápida: 60–90 min)',min:30,max:120,step:5,unit:' min',emoji:'⏱️',color:'#7C3AED'},
+  {key:'insulinDuration',label:'Duración de acción',desc:'Duración total de la insulina rápida',min:120,max:360,step:15,unit:' min',emoji:'⏰',color:'#6D28D9'},
+  {key:'maxAutoDosePerShot',label:'Tope por dosis automática',desc:'Límite de seguridad por inyección del modo automático',min:2,max:12,step:0.5,unit:' U',emoji:'🛡️',color:'#8B5CF6'},
+  {key:'maxAutoTotalDose',label:'Tope total automático',desc:'Límite de seguridad del total sugerido',min:4,max:25,step:0.5,unit:' U',emoji:'🛡️',color:'#7C3AED'},
+  {key:'hypoThreshold',label:'Umbral de aviso de bajada',desc:'Si la curva cae por debajo, se avisa de posible hipo',min:60,max:90,step:1,unit:' mg/dL',emoji:'⚠️',color:'#EF4444'},
   {section:'🩺 Condiciones de salud'},
   {key:'sickMultiplier',label:'Resistencia por enfermedad',desc:'Factor multiplicador de glucosa cuando estás enfermo/a (ej: 1.5 = 50% más)',min:1,max:3,step:0.1,unit:'×',emoji:'🤒',color:'#EF4444'},
   {key:'menstruationMultiplier',label:'Resistencia por menstruación',desc:'Factor de resistencia a la insulina durante la menstruación',min:1,max:2.5,step:0.1,unit:'×',emoji:'🔴',color:'#A855F7'},
@@ -1274,24 +1645,31 @@ function renderSettings(){
   SDEFS.forEach(s=>{
     if(s.section){html+=`<div class="setting-section-title">${s.section}</div>`;return;}
     html+=`<div class="setting-card"><div class="setting-header"><div><div class="setting-label">${s.emoji} ${s.label}</div><div class="setting-desc">${s.desc}</div></div><div class="setting-val" id="sv-${s.key}" style="background:${s.color}20;color:${s.color}">${config[s.key]}<span>${s.unit}</span></div></div>
-      <input type="range" min="${s.min}" max="${s.max}" step="${s.step}" value="${config[s.key]}" style="accent-color:${s.color}" oninput="config['${s.key}']=+this.value;document.getElementById('sv-${s.key}').innerHTML=this.value+'<span>${s.unit}</span>';persist()">
+      <input type="range" min="${s.min}" max="${s.max}" step="${s.step}" value="${config[s.key]}" style="accent-color:${s.color}" oninput="config['${s.key}']=+this.value;document.getElementById('sv-${s.key}').innerHTML=this.value+'<span>${s.unit}</span>';persist();scheduleGraph()">
       <div class="range-labels"><span>${s.min}${s.unit}</span><span>${s.max}${s.unit}</span></div></div>`;
   });
+  html = `<div class="setting-section-title">🧰 Tipo de dispositivo</div>
+    <div class="setting-card"><div class="setting-header"><div><div class="setting-label">🖊️ Dispositivo de dosis</div><div class="setting-desc">Cambia el redondeo mínimo de unidades según pluma o bomba</div></div><div class="setting-val" style="background:#0ea5e920;color:#0f766e">${config.deviceType==='pen'?'Pluma':config.deviceType==='accuchek'?'Bomba precisa':'Bomba'}</div></div>
+      <select class="input" onchange="applyDevicePreset(this.value)" style="padding:10px 12px;font-weight:700">
+        <option value="pen" ${config.deviceType==='pen'?'selected':''}>Pluma (paso 1U)</option>
+        <option value="pump" ${config.deviceType==='pump'?'selected':''}>Bomba (paso 0,1U)</option>
+        <option value="accuchek" ${config.deviceType==='accuchek'?'selected':''}>Bomba precisa / Accu-Chek (0,1U)</option>
+      </select>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px">Paso actual: <strong>${config.doseRoundStep}U</strong> · dosis mínima: <strong>${config.doseMin}U</strong></div></div>` + html;
   document.getElementById('settings-fields').innerHTML=html;
   document.getElementById('targetMin').value=config.targetMin;
   document.getElementById('targetMax').value=config.targetMax;
-  ['targetMin','targetMax'].forEach(k=>{document.getElementById(k).oninput=function(){config[k]=+this.value;persist();};});
+  ['targetMin','targetMax'].forEach(k=>{document.getElementById(k).oninput=function(){config[k]=+this.value;persist();scheduleGraph();};});
 }
 
 function resetConfig(){
   if(!confirm('¿Restaurar valores por defecto?'))return;
-  config={baseGlucose:100,sensitivity:3.5,simpleSugarTime:30,complexCarbTime:90,proteinTime:180,fatTime:300,
-    insulinSensitivity:50,insulinPeakTime:75,insulinDuration:240,sickMultiplier:1.5,menstruationMultiplier:1.3,targetMin:70,targetMax:140};
+  config={baseGlucose:100,sensitivity:3.5,carbRatio:10,simpleSugarTime:30,complexCarbTime:95,proteinTime:240,fatTime:320,simpleDuration:90,complexDuration:240,proteinDuration:360,fatDuration:480,proteinImpactFactor:1,fatImpactFactor:1,fatCarbDelayPer10g:10,basalDecayPerHour:2.4,insulinSensitivity:50,insulinOnset:15,insulinPeakTime:75,insulinDuration:240,sickMultiplier:1.5,menstruationMultiplier:1.3,targetMin:70,targetMax:140,maxAutoDosePerShot:8,maxAutoTotalDose:18,doseRoundStep:0.1,deviceType:'pump',doseMin:0.1,hypoThreshold:70};
   persist();renderSettings();toast('Configuración restaurada');
 }
 
 // ═══ INIT ═════════════════════════════════════════════════
-loadAll();updateMealChip();renderSettings();
+loadAll();if(!config.deviceType)config.deviceType='pump';if(!config.doseMin)config.doseMin=config.deviceType==='pen'?1:0.1;if(!config.doseRoundStep)config.doseRoundStep=config.deviceType==='pen'?1:0.1;updateMealChip();renderSettings();renderCurveToggles();renderHistory();
 // Open IndexedDB for offline cache (non-blocking)
 openIDB().then(db=>{idb=db;}).catch(e=>console.warn('IndexedDB unavailable:',e));
 </script>
