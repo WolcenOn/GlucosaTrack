@@ -1,0 +1,10 @@
+{
+  "categoria": "Apps",
+  "icono": "📱",
+  "etiquetas": ["salud", "glucosa", "seguimiento", "registro"],
+  "descripcion": "Aplicación para registrar o hacer seguimiento de valores de glucosa.",
+  "demo": "",
+  "destacado": false,
+  "orden": 43,
+  "ocultar": false
+}
